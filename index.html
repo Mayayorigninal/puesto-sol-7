@@ -1,0 +1,700 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Puesto Sol 7</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=IBM+Plex+Mono:wght@500&family=Nunito:wght@400;600;700&display=swap">
+<style>
+  /* Layout: app vertical de celular — tres pestañas, barra inferior fija.
+     Tema único oscuro a propósito: el juego pasa en un puesto espacial. */
+  :root {
+    --bg: #0A0E1A; --panel: #141B2C; --panel-2: #1E2740;
+    --ink: #E8EDF7; --muted: #8A95AD; --line: #2A3348;
+    --sun: #F2B134; --life: #3FC9A0; --shield: #5B9BF5;
+    --crop: #8ED04E; --alert: #EF6B4A; --dust: #C4A478;
+    --display: "Fredoka", system-ui, sans-serif;
+    --body: "Nunito", system-ui, sans-serif;
+    --data: "IBM Plex Mono", ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); overflow: hidden; }
+  #app { height: 100%; max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; position: relative; }
+
+  .top {
+    display: flex; align-items: center; gap: 10px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 9px 7px; border-bottom: 1px solid var(--line); flex: none;
+  }
+  .barra { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .barra .et { font-family: var(--data); font-size: .6rem; letter-spacing: .1em; color: var(--muted); }
+  .barra .et b { color: var(--ink); }
+  .pista { height: 5px; border-radius: 3px; background: var(--panel-2); overflow: hidden; }
+  .pista i { display: block; height: 100%; background: var(--sun); border-radius: 3px; transition: width .4s ease; }
+  .energia { display: flex; align-items: center; gap: 6px; flex: none; }
+  .energia .n { font-family: var(--display); font-weight: 700; font-size: 1.1rem; color: var(--sun); font-variant-numeric: tabular-nums; }
+  .bolt { width: 15px; height: 15px; color: var(--sun); }
+
+  .view { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
+  .pad {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 16px;
+  }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: .98rem; margin: 0; }
+  p { margin: 0; }
+  .lead { color: var(--muted); font-size: .88rem; line-height: 1.5; }
+  .eyebrow { font-family: var(--data); font-size: .6rem; letter-spacing: .13em; text-transform: uppercase; color: var(--muted); }
+
+  /* ---- 1. estado ---- */
+  .avatar-wrap { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+  .remo { width: 148px; height: 166px; }
+  .estado { font-family: var(--display); font-weight: 600; font-size: 1.1rem; text-align: center; text-wrap: balance; }
+  .estado-sub { color: var(--muted); font-size: .86rem; text-align: center; text-wrap: balance; max-width: 30ch; }
+  .sistemas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; width: 100%; }
+  .sis { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+  .sis svg { width: 21px; height: 21px; }
+  .sis .track { width: 100%; height: 6px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+  .sis .fill { height: 100%; border-radius: 4px; transition: width .3s ease; }
+  .sis .nom { font-family: var(--data); font-size: .54rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .sis.ox svg { color: var(--life); } .sis.ox .fill { background: var(--life); }
+  .sis.co svg { color: var(--crop); } .sis.co .fill { background: var(--crop); }
+  .sis.tr svg { color: var(--shield); } .sis.tr .fill { background: var(--shield); }
+  .sis.bajo svg { color: var(--alert); } .sis.bajo .fill { background: var(--alert); }
+
+  /* ---- 2. hitos ---- */
+  .hitos { display: flex; flex-direction: column; gap: 9px; }
+  .hito { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .hito.bloqueado { opacity: .42; }
+  .hito .cab { display: flex; align-items: center; gap: 8px; }
+  .hito .cab svg { width: 17px; height: 17px; color: var(--sun); flex: none; }
+  .hito.bloqueado .cab svg { color: var(--muted); }
+  .hito p { font-size: .85rem; line-height: 1.5; color: var(--muted); }
+  .hito .fuente { font-family: var(--data); font-size: .58rem; line-height: 1.5; color: var(--shield); border-top: 1px solid var(--line); padding-top: 6px; margin-top: 2px; }
+
+  /* ---- 3. misión ---- */
+  #view-mision { padding: 0; }
+  .campo {
+    flex: 1; min-height: 0; position: relative; overflow-y: auto;
+    background: radial-gradient(130% 50% at 50% 0%, #2B2338 0%, transparent 70%), linear-gradient(180deg, #0E1424, #0A0E1A 60%, #171224);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 14px;
+  }
+  .carta {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 20px; width: 100%; max-width: 350px; display: flex; flex-direction: column; gap: 13px;
+  }
+  .carta .grande { align-self: center; width: 64px; height: 64px; color: var(--shield); }
+  .carta .quien { font-family: var(--data); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--shield); text-align: center; }
+  .carta .dice { font-family: var(--display); font-weight: 600; font-size: 1.08rem; line-height: 1.35; text-align: center; text-wrap: balance; }
+  .ops { display: flex; flex-direction: column; gap: 8px; }
+  .op {
+    font-family: var(--body); font-weight: 700; font-size: .92rem; text-align: left;
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--ink);
+    border-radius: 12px; padding: 12px 13px; cursor: pointer;
+  }
+  .op small { display: block; font-weight: 400; font-size: .78rem; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+  .op:hover { border-color: var(--shield); }
+  .op:focus-visible, .btn:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
+  .btn {
+    font-family: var(--display); font-weight: 700; font-size: .95rem;
+    border: none; border-radius: 12px; padding: 13px 20px;
+    background: var(--sun); color: #231803; cursor: pointer;
+  }
+  .btn.sec { background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .real { background: var(--panel-2); border-left: 3px solid var(--shield); border-radius: 0 10px 10px 0; padding: 11px 13px; font-size: .84rem; line-height: 1.5; }
+  .real b { color: var(--shield); font-family: var(--data); font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .efectos { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+  .chip { font-family: var(--data); font-size: .66rem; border-radius: 20px; padding: 4px 10px; border: 1px solid; }
+  .chip.mas { color: var(--life); border-color: var(--life); }
+  .chip.menos { color: var(--alert); border-color: var(--alert); }
+
+  /* ---- minijuegos: piezas comunes ---- */
+  .mj { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
+  .mj-orden { font-family: var(--display); font-weight: 700; font-size: 1.25rem; text-align: center; text-wrap: balance; }
+  .medidor { display: flex; flex-direction: column; gap: 4px; }
+  .medidor .et { display: flex; justify-content: space-between; font-family: var(--data); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .medidor .tr { position: relative; height: 10px; border-radius: 6px; background: var(--panel-2); overflow: hidden; }
+  .medidor .tr i { display: block; height: 100%; border-radius: 6px; }
+  .medidor .meta { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); }
+  .mj-nota { min-height: 1.3em; text-align: center; font-size: .84rem; color: var(--muted); }
+
+  /* ---- polvo ---- */
+  .lienzo-caja { position: relative; border-radius: 12px; overflow: hidden; border: 2px solid var(--line); touch-action: none; }
+  .lienzo-caja canvas { display: block; width: 100%; touch-action: none; cursor: grab; }
+  .viento {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    font-family: var(--display); font-weight: 700; font-size: .9rem; letter-spacing: .06em;
+    background: var(--ink); color: var(--bg); border-radius: 20px; padding: 4px 14px; pointer-events: none;
+  }
+  .polvo-pie { display: flex; gap: 10px; align-items: center; }
+  .polvo-pie .btn { flex: 1; }
+
+  /* ---- filtro ---- */
+  .radio {
+    background: var(--panel); border: 1px solid var(--shield); border-radius: 12px;
+    padding: 10px 13px; display: flex; gap: 10px; align-items: center;
+  }
+  .radio svg { width: 30px; height: 30px; color: var(--shield); flex: none; }
+  .radio .paso { font-family: var(--data); font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; color: var(--shield); }
+  .radio .pide { font-family: var(--display); font-weight: 700; font-size: 1.12rem; }
+  .buzon { width: 100%; height: 118px; background: var(--panel); border-radius: 12px; border: 1px solid var(--line); }
+  .bandeja { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; transition: filter .5s; }
+  .pieza {
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px;
+    padding: 9px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; color: var(--ink); font-family: var(--body); font-weight: 700; font-size: .7rem; text-align: center; min-width: 0;
+  }
+  .pieza svg { width: 38px; height: 38px; }
+  .pieza.mal { border-color: var(--alert); }
+  .pieza:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
+  .sellar { position: relative; overflow: hidden; }
+  .sellar i { position: absolute; inset: 0 auto 0 0; width: 0%; background: rgba(35,24,3,.28); }
+  .sellar span { position: relative; }
+
+  nav {
+    flex: none; display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line); background: var(--panel);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  nav button {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-family: var(--data); font-size: .54rem; letter-spacing: .09em; text-transform: uppercase;
+  }
+  nav button svg { width: 20px; height: 20px; }
+  nav button[aria-selected="true"] { color: var(--sun); }
+  nav button:focus-visible { outline: 2px solid var(--sun); outline-offset: -3px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="i-ox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s-6 6.6-6 10a6 6 0 0 0 12 0c0-3.4-6-10-6-10z"/></symbol>
+  <symbol id="i-crop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V11"/><path d="M12 13c-4 0-6-2.5-6-6 4 0 6 2.5 6 6z"/><path d="M12 15c4 0 6-2.5 6-6-4 0-6 2.5-6 6z"/></symbol>
+  <symbol id="i-trip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9.5" r="2.4"/><path d="M15.5 20a5.5 5.5 0 0 1 5.5-5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14.5" r="5.2"/><path d="M8.5 9.6L6 2.8h12l-2.5 6.8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></symbol>
+  <symbol id="i-persona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-base" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20v-6a7 7 0 0 1 14 0v6"/><circle cx="12" cy="14" r="2.2"/></symbol>
+  <symbol id="i-bip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="12" rx="3"/><path d="M12 8V4.5"/><circle cx="9" cy="13.5" r="1.6"/><circle cx="15" cy="13.5" r="1.6"/><path d="M9.5 17.3h5"/></symbol>
+  <!-- piezas del filtro -->
+  <symbol id="p-bolsa" viewBox="0 0 40 40"><path d="M10 12h20l3 22H7z" fill="#BFD9F2" opacity=".55" stroke="#DCEBFA" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 12c0-6 12-6 12 0" fill="none" stroke="#DCEBFA" stroke-width="1.6"/></symbol>
+  <symbol id="p-carton" viewBox="0 0 40 40"><rect x="7" y="9" width="26" height="22" rx="1.5" fill="#B98A55"/><path d="M7 16h26M7 23h26" stroke="#8F683C" stroke-width="1.4"/><path d="M12 12h9" stroke="#F1DEC2" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="p-cinta" viewBox="0 0 40 40"><circle cx="18" cy="21" r="12" fill="#9AA3B2"/><circle cx="18" cy="21" r="5" fill="#141B2C"/><path d="M28 27l8 3v5l-9-3z" fill="#9AA3B2"/></symbol>
+  <symbol id="p-manguera" viewBox="0 0 40 40"><path d="M6 30c0-14 9-4 14-12s8-10 14-8" fill="none" stroke="#E8EDF7" stroke-width="5" stroke-linecap="round"/><path d="M6 30c0-14 9-4 14-12s8-10 14-8" fill="none" stroke="#8A95AD" stroke-width="5" stroke-linecap="round" stroke-dasharray="1.5 4"/></symbol>
+  <symbol id="p-cuchara" viewBox="0 0 40 40"><ellipse cx="13" cy="12" rx="6" ry="8" fill="#C9D1DE" transform="rotate(-35 13 12)"/><path d="M17 17l15 16" stroke="#C9D1DE" stroke-width="3.4" stroke-linecap="round"/></symbol>
+  <symbol id="p-linterna" viewBox="0 0 40 40"><path d="M6 15l10-3v16L6 25z" fill="#F2B134"/><rect x="16" y="14" width="18" height="12" rx="3" fill="#5B6880"/><rect x="22" y="17" width="6" height="3" rx="1.5" fill="#EF6B4A"/></symbol>
+</svg>
+
+<div id="app">
+  <div class="top">
+    <div class="barra">
+      <div class="et">SOL <b>1</b> DE 8 · 3 oct 2026 · Sol tranquilo</div>
+      <div class="pista"><i id="t-pista" style="width:0%"></i></div>
+    </div>
+    <div class="energia">
+      <svg class="bolt" aria-hidden="true"><use href="#i-bolt"></use></svg>
+      <span class="n" id="t-energia">40</span>
+    </div>
+  </div>
+
+  <!-- 1. ESTADO -->
+  <div class="view pad" id="view-estado" hidden>
+    <div class="avatar-wrap">
+      <svg class="remo" id="remo-svg" viewBox="0 0 148 166" aria-label="Remo, encargado del puesto"></svg>
+      <div>
+        <div class="estado" id="remo-estado">Remo está listo.</div>
+        <div class="estado-sub" id="remo-sub">Primer sol en el Puesto Sol 7.</div>
+      </div>
+      <div class="sistemas">
+        <div class="sis ox" id="sis-ox"><svg aria-hidden="true"><use href="#i-ox"></use></svg><div class="track"><div class="fill" style="width:100%"></div></div><div class="nom">Oxígeno</div></div>
+        <div class="sis co" id="sis-co"><svg aria-hidden="true"><use href="#i-crop"></use></svg><div class="track"><div class="fill" style="width:100%"></div></div><div class="nom">Comida</div></div>
+        <div class="sis tr" id="sis-tr"><svg aria-hidden="true"><use href="#i-trip"></use></svg><div class="track"><div class="fill" style="width:100%"></div></div><div class="nom">Tripulación</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HITOS -->
+  <div class="view pad" id="view-hitos" hidden>
+    <div class="hitos">
+      <div>
+        <div class="eyebrow">Almanaque</div>
+        <h2 style="margin-top:4px">Lo que vas descubriendo</h2>
+        <p class="lead" style="margin-top:6px">Cada cosa que te pasa abre su ficha, con lo que significa de verdad.</p>
+      </div>
+      <div id="lista-hitos" class="hitos"></div>
+    </div>
+  </div>
+
+  <!-- 3. MISIÓN -->
+  <div class="view" id="view-mision">
+    <div class="campo" id="campo"></div>
+  </div>
+
+  <nav role="tablist">
+    <button type="button" role="tab" aria-selected="false" data-vista="estado"><svg aria-hidden="true"><use href="#i-persona"></use></svg>Estado</button>
+    <button type="button" role="tab" aria-selected="false" data-vista="hitos"><svg aria-hidden="true"><use href="#i-medal"></use></svg>Hitos</button>
+    <button type="button" role="tab" aria-selected="true" data-vista="mision"><svg aria-hidden="true"><use href="#i-base"></use></svg>Misión</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ==========================================================
+     CALENDARIO REAL — NASA/CCMC DONKI, catálogo M2M_CATALOG.
+     Descargado el 14-11-2026 de:
+     https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2026-10-01&endDate=2026-11-13
+     (En esta versión solo se juega el sol 1; los demás quedan listos.)
+     ========================================================== */
+  var CALENDARIO = [
+    { sol: 1, fecha: "3 oct 2026",  clase: "tranquilo",   flr: null },
+    { sol: 2, fecha: "4 oct 2026",  clase: "tranquilo",   flr: "B9.3" },
+    { sol: 3, fecha: "5 oct 2026",  clase: "fulguracion", flr: "M1.0" },
+    { sol: 4, fecha: "6 oct 2026",  clase: "fulguracion", flr: "M1.8" },
+    { sol: 5, fecha: "7 oct 2026",  clase: "tranquilo",   flr: "C7.9" },
+    { sol: 6, fecha: "8 oct 2026",  clase: "tormenta",    flr: "M6.7" },
+    { sol: 7, fecha: "9 oct 2026",  clase: "fulguracion", flr: "M1.3" },
+    { sol: 8, fecha: "10 oct 2026", clase: "tormenta",    flr: "M6.4" }
+  ];
+
+  var FICHAS = [
+    { id: "polvo", t: "Polvo lunar", x: "No es tierra normal: es vidrio molido. Como en la Luna no hay viento ni agua, cada granito sigue teniendo filos. Se pega con electricidad estática, por eso si lo frotas vuelve.", f: "NASA — misiones Apolo" },
+    { id: "arena", t: "Limpiar con arena", x: "En Marte, el módulo InSight se estaba quedando sin energía por el polvo. La solución fue echarle arena encima: el viento arrastró los granos gruesos y estos tumbaron el polvo fino.", f: "NASA/JPL — misión InSight, 2021" },
+    { id: "co2", t: "El aire que exhalas", x: "Lo peligroso no es quedarte sin oxígeno: es que el aire que sacas (CO₂) se quede contigo. Y antes de hacerte daño te pone torpe y con sueño.", f: "NASA — soporte vital" },
+    { id: "buzon", t: "El buzón del Apolo 13", x: "Los filtros de repuesto eran cuadrados y la ranura era redonda. Los astronautas armaron un adaptador con bolsas, cartón, cinta gris y una manguera, siguiendo instrucciones por radio.", f: "NASA — Apolo 13, abril de 1970" }
+  ];
+
+  var S, anim = null;
+  var campo = document.getElementById("campo");
+
+  function lim(n) { return Math.max(0, Math.min(100, n)); }
+  function $(id) { return document.getElementById(id); }
+  function parar() { if (anim !== null) { cancelAnimationFrame(anim); anim = null; } }
+
+  /* ---------- navegación ---------- */
+  function mostrar(v) {
+    ["estado", "hitos", "mision"].forEach(function (n) { $("view-" + n).hidden = (n !== v); });
+    Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
+      b.setAttribute("aria-selected", String(b.getAttribute("data-vista") === v));
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
+    b.addEventListener("click", function () { mostrar(b.getAttribute("data-vista")); });
+  });
+
+  /* ---------- estado y almanaque ---------- */
+  function dibujarRemo() {
+    var peor = Math.min(S.oxigeno, S.comida, S.tripulacion);
+    var color = peor > 65 ? "#3FC9A0" : peor > 35 ? "#F2B134" : "#EF6B4A";
+    var ojos = peor > 35
+      ? '<circle cx="62" cy="82" r="4.6" fill="#1A2233"/><circle cx="86" cy="82" r="4.6" fill="#1A2233"/>'
+      : '<path d="M57 78l9 8M66 78l-9 8M82 78l9 8M91 78l-9 8" stroke="#1A2233" stroke-width="3.2" stroke-linecap="round"/>';
+    var boca = peor > 65
+      ? '<path d="M62 97q12 10 24 0" stroke="#1A2233" stroke-width="3.2" fill="none" stroke-linecap="round"/>'
+      : peor > 35
+      ? '<path d="M63 100h22" stroke="#1A2233" stroke-width="3.2" stroke-linecap="round"/>'
+      : '<path d="M63 103q11 -9 22 0" stroke="#1A2233" stroke-width="3.2" fill="none" stroke-linecap="round"/>';
+    $("remo-svg").innerHTML =
+      '<ellipse cx="74" cy="156" rx="38" ry="7" fill="#000" opacity=".3"/>' +
+      '<rect x="42" y="110" width="64" height="44" rx="17" fill="#D8DEE9"/>' +
+      '<rect x="55" y="121" width="38" height="20" rx="6" fill="' + color + '" opacity=".85"/>' +
+      '<circle cx="74" cy="81" r="43" fill="#EFF3F8"/><circle cx="74" cy="81" r="35" fill="#2A3348"/>' +
+      '<circle cx="74" cy="85" r="29" fill="#F4D9B8"/>' + ojos + boca;
+    $("remo-estado").textContent = peor > 65 ? "Remo está bien." : peor > 35 ? "Remo aguanta, pero se nota." : "Remo está en problemas.";
+    $("remo-sub").textContent = "Sol 1. Oxígeno " + Math.round(S.oxigeno) + ", comida " + Math.round(S.comida) + ", tripulación " + Math.round(S.tripulacion) + ".";
+  }
+
+  function pintar() {
+    [["sis-ox", S.oxigeno], ["sis-co", S.comida], ["sis-tr", S.tripulacion]].forEach(function (p) {
+      var n = $(p[0]);
+      n.querySelector(".fill").style.width = p[1] + "%";
+      n.classList.toggle("bajo", p[1] <= 25);
+    });
+    $("t-energia").textContent = Math.round(S.energia);
+    dibujarRemo();
+  }
+
+  function pintarHitos() {
+    var caja = $("lista-hitos");
+    caja.innerHTML = "";
+    FICHAS.forEach(function (f) {
+      var ab = !!S.abiertas[f.id];
+      var d = document.createElement("div");
+      d.className = "hito" + (ab ? "" : " bloqueado");
+      d.innerHTML = '<div class="cab"><svg aria-hidden="true"><use href="#' + (ab ? "i-medal" : "i-lock") +
+        '"></use></svg><h3>' + (ab ? f.t : "Por descubrir") + "</h3></div>" +
+        (ab ? "<p>" + f.x + '</p><div class="fuente">' + f.f + "</div>" : "<p>Se abre cuando te topes con esto en la misión.</p>");
+      caja.appendChild(d);
+    });
+  }
+  function abrir(id) { if (!S.abiertas[id]) { S.abiertas[id] = true; pintarHitos(); } }
+
+  /* ==========================================================
+     LA DECISIÓN DEL SOL 1
+     ========================================================== */
+  function decision() {
+    parar();
+    campo.innerHTML =
+      '<div class="carta">' +
+      '<svg class="grande" aria-hidden="true"><use href="#i-bip"></use></svg>' +
+      '<div class="quien">BIP · protocolo de mantenimiento</div>' +
+      '<div class="dice">Capitán, hay dos pendientes y la tripulación solo alcanza para uno hoy. El reglamento dice que elige usted.</div>' +
+      '<div class="ops">' +
+      '<button class="op" type="button" data-r="polvo">Limpiar los paneles<small>Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.</small></button>' +
+      '<button class="op" type="button" data-r="filtro">Cambiar el filtro de aire<small>Lleva demasiadas horas de uso. Los paneles siguen sucios otro día.</small></button>' +
+      "</div></div>";
+    Array.prototype.forEach.call(campo.querySelectorAll(".op"), function (b) {
+      b.addEventListener("click", function () {
+        instruccion(b.getAttribute("data-r"));
+      });
+    });
+  }
+
+  function instruccion(rama) {
+    var txt = rama === "polvo"
+      ? ["¡Limpia el panel!", "Frota con el dedo. Pero ojo: el polvo se vuelve a pegar. Hay otra forma…"]
+      : ["¡Arma el adaptador!", "El repuesto es cuadrado y la ranura es redonda. Haz lo que BIP te dicte, antes de que el aire se ponga pesado."];
+    campo.innerHTML =
+      '<div class="carta" style="text-align:center">' +
+      '<div class="dice" style="font-size:1.5rem">' + txt[0] + "</div>" +
+      '<p class="lead">' + txt[1] + "</p>" +
+      '<button class="btn" type="button">¡Ya!</button></div>';
+    campo.querySelector(".btn").addEventListener("click", function () {
+      if (rama === "polvo") jugarPolvo(); else jugarFiltro();
+    });
+  }
+
+  /* ==========================================================
+     MINIJUEGO A — POLVO EN LOS PANELES
+     Hechos reales que modela:
+     1. Frotar no basta: la estática vuelve a pegar el polvo.
+     2. Echar arena CON viento sí limpia (InSight, 2021).
+     3. El viento llega cuando quiere (Spirit y Opportunity).
+     ========================================================== */
+  function jugarPolvo() {
+    var COLS = 20, FILAS = 13, DURA = 22, META = 0.80;
+    campo.innerHTML =
+      '<div class="mj">' +
+      '<div class="medidor"><div class="et"><span>Tiempo</span><span id="pv-seg">22</span></div><div class="tr"><i id="pv-t" style="width:100%;background:var(--muted)"></i></div></div>' +
+      '<div class="medidor"><div class="et"><span>Energía del panel</span><span>meta 80%</span></div><div class="tr"><i id="pv-e" style="width:8%;background:var(--sun)"></i><span class="meta" style="left:80%"></span></div></div>' +
+      '<div class="lienzo-caja"><canvas id="pv-c"></canvas><div class="viento" id="pv-v" hidden>¡VIENTO!</div></div>' +
+      '<div class="mj-nota" id="pv-n">Frota el panel con el dedo.</div>' +
+      '<div class="polvo-pie"><button class="btn" id="pv-a" type="button">Echar arena · 3</button></div>' +
+      "</div>";
+
+    var cv = $("pv-c"), ctx = cv.getContext("2d");
+    var ancho = Math.min(400, campo.clientWidth - 32), alto = Math.round(ancho * 0.65);
+    var dpr = window.devicePixelRatio || 1;
+    cv.width = ancho * dpr; cv.height = alto * dpr; cv.style.height = alto + "px";
+    ctx.scale(dpr, dpr);
+    var cw = ancho / COLS, ch = alto / FILAS;
+
+    var polvo = [], tope = [], i;
+    for (i = 0; i < COLS * FILAS; i++) { tope.push(1); polvo.push(0.88 + Math.random() * 0.1); }
+
+    var t = 0, arena = 3, viento = false, tSig = 2.6, tFin = 0, olas = [], sostenido = 0, ultimo = performance.now(), fin = false;
+
+    function frotar(e) {
+      if (fin) return;
+      var r = cv.getBoundingClientRect();
+      var cx = (e.clientX - r.left) / cw, cy = (e.clientY - r.top) / ch;
+      for (var f = 0; f < FILAS; f++) for (var c = 0; c < COLS; c++) {
+        var dx = c + 0.5 - cx, dy = f + 0.5 - cy;
+        if (dx * dx + dy * dy < 3.4) polvo[f * COLS + c] = 0;
+      }
+    }
+    var abajo = false;
+    cv.addEventListener("pointerdown", function (e) { abajo = true; cv.setPointerCapture(e.pointerId); frotar(e); });
+    cv.addEventListener("pointermove", function (e) { if (abajo) frotar(e); });
+    cv.addEventListener("pointerup", function () { abajo = false; });
+    cv.addEventListener("pointercancel", function () { abajo = false; });
+
+    $("pv-a").addEventListener("click", function () {
+      if (fin || arena <= 0) return;
+      arena--;
+      $("pv-a").textContent = "Echar arena · " + arena;
+      if (arena === 0) $("pv-a").disabled = true;
+      abrir("arena");
+      if (viento) { olas.push({ x: 0, hecho: 0 }); $("pv-n").textContent = "¡Eso! El viento arrastra la arena y tumba el polvo."; }
+      else $("pv-n").textContent = "Sin viento, la arena se quedó ahí tirada.";
+    });
+
+    function cuadro(ahora) {
+      var dt = Math.min(0.05, (ahora - ultimo) / 1000); ultimo = ahora;
+      if (fin) return;
+      t += dt;
+
+      // el viento llega cuando quiere
+      if (!viento && t >= tSig) { viento = true; tFin = t + 1.5; $("pv-v").hidden = false; }
+      if (viento && t >= tFin) { viento = false; tSig = t + 1.9 + Math.random() * 1.6; $("pv-v").hidden = true; }
+
+      // la estática vuelve a pegar el polvo (hasta 60% del tope de cada celda)
+      var suma = 0;
+      for (i = 0; i < polvo.length; i++) {
+        var obj = tope[i] * 0.6;
+        if (polvo[i] < obj) polvo[i] = Math.min(obj, polvo[i] + 0.16 * dt);
+        suma += polvo[i];
+      }
+
+      // olas de arena: bajan el tope para siempre
+      for (var o = olas.length - 1; o >= 0; o--) {
+        var ola = olas[o];
+        ola.x += dt / 0.9;
+        var hasta = Math.min(COLS, Math.floor(ola.x * COLS) + 1);
+        for (var c = ola.hecho; c < hasta; c++) for (var f = 0; f < FILAS; f++) {
+          var k = f * COLS + c;
+          tope[k] *= 0.55; polvo[k] = Math.min(polvo[k], tope[k]);
+        }
+        ola.hecho = hasta;
+        if (ola.x >= 1) olas.splice(o, 1);
+      }
+
+      var limpio = 1 - suma / polvo.length;
+
+      // dibujo
+      ctx.clearRect(0, 0, ancho, alto);
+      ctx.fillStyle = "#17335F"; ctx.fillRect(0, 0, ancho, alto);
+      ctx.strokeStyle = "rgba(140,180,240,.35)"; ctx.lineWidth = 1;
+      for (var gx = 0; gx <= COLS; gx += 4) { ctx.beginPath(); ctx.moveTo(gx * cw, 0); ctx.lineTo(gx * cw, alto); ctx.stroke(); }
+      for (var gy = 0; gy <= FILAS; gy += 3) { ctx.beginPath(); ctx.moveTo(0, gy * ch); ctx.lineTo(ancho, gy * ch); ctx.stroke(); }
+      for (var ff = 0; ff < FILAS; ff++) for (var cc = 0; cc < COLS; cc++) {
+        var a = polvo[ff * COLS + cc];
+        if (a > 0.02) { ctx.fillStyle = "rgba(196,164,120," + a.toFixed(2) + ")"; ctx.fillRect(cc * cw, ff * ch, cw + 0.5, ch + 0.5); }
+      }
+      if (viento) {
+        ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 2; ctx.lineCap = "round";
+        for (var s = 0; s < 6; s++) {
+          var px = ((t * 420 + s * 97) % (ancho + 80)) - 40, py = alto * (0.12 + s * 0.15);
+          ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + 34, py); ctx.stroke();
+        }
+      }
+      olas.forEach(function (ola) {
+        ctx.fillStyle = "#F0D9A8";
+        for (var g = 0; g < 26; g++) {
+          ctx.beginPath();
+          ctx.arc(ola.x * ancho - (g % 5) * 5, (g / 26) * alto + ((g * 37) % 9), 2.4, 0, 6.3);
+          ctx.fill();
+        }
+      });
+
+      $("pv-e").style.width = Math.round(limpio * 100) + "%";
+      $("pv-t").style.width = Math.max(0, (1 - t / DURA) * 100) + "%";
+      $("pv-seg").textContent = Math.max(0, Math.ceil(DURA - t));
+
+      sostenido = limpio >= META ? sostenido + dt : 0;
+      if (sostenido >= 0.7) { fin = true; return resultado("polvo", true, limpio); }
+      if (t >= DURA) { fin = true; return resultado("polvo", false, limpio); }
+      anim = requestAnimationFrame(cuadro);
+    }
+    abrir("polvo");
+    anim = requestAnimationFrame(cuadro);
+  }
+
+  /* ==========================================================
+     MINIJUEGO B — EL FILTRO DE CO2 ("el buzón" del Apolo 13)
+     Hechos reales que modela:
+     1. Repuesto cuadrado, ranura redonda: hay que improvisar.
+     2. Se armó con bolsa, cartón, cinta y manguera, dictado por radio.
+     3. El CO2 te pone torpe ANTES de hacerte daño: mientras más
+        tardas, más difícil se vuelve (borroso, letras y piezas revueltas).
+     ========================================================== */
+  function jugarFiltro() {
+    var PIEZAS = [
+      { id: "bolsa", n: "Bolsa" }, { id: "carton", n: "Cartón" }, { id: "cinta", n: "Cinta gris" },
+      { id: "manguera", n: "Manguera" }, { id: "cuchara", n: "Cuchara" }, { id: "linterna", n: "Linterna" }
+    ];
+    var PASOS = ["bolsa", "carton", "cinta", "manguera"];
+    var PARA = { bolsa: "envuelve el filtro", carton: "que la bolsa no se aplaste", cinta: "séllalo todo", manguera: "conéctalo a la ranura" };
+
+    campo.innerHTML =
+      '<div class="mj">' +
+      '<div class="medidor"><div class="et"><span>CO₂ en la cabina</span><span id="fl-p">28%</span></div><div class="tr"><i id="fl-c" style="width:28%;background:var(--life)"></i></div></div>' +
+      '<svg class="buzon" id="fl-b" viewBox="0 0 320 118" aria-label="El adaptador en construcción"></svg>' +
+      '<div class="radio"><svg aria-hidden="true"><use href="#i-bip"></use></svg><div><div class="paso" id="fl-paso">Paso 1 de 4</div><div class="pide" id="fl-pide"></div></div></div>' +
+      '<div class="bandeja" id="fl-bandeja"></div>' +
+      '<div class="mj-nota" id="fl-n">Toca la pieza que pide BIP.</div>' +
+      "</div>";
+
+    var paso = 0, co2 = 28, fin = false, ultimo = performance.now(), orden = PIEZAS.slice(), sellando = false, sello = 0;
+
+    function barajar(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var x = a[i]; a[i] = a[j]; a[j] = x; } return a; }
+    function nivel() { return co2 > 80 ? 3 : co2 > 62 ? 2 : co2 > 48 ? 1 : 0; }
+    function revolver(txt, n) {
+      if (!n) return txt;
+      var a = txt.split("");
+      for (var k = 0; k < n * 2; k++) {
+        var i = 1 + Math.floor(Math.random() * Math.max(1, a.length - 2));
+        if (i + 1 < a.length && a[i] !== " " && a[i + 1] !== " ") { var x = a[i]; a[i] = a[i + 1]; a[i + 1] = x; }
+      }
+      return a.join("");
+    }
+
+    function pintarBuzon() {
+      var g = [];
+      g.push('<rect x="0" y="0" width="70" height="118" fill="#1E2740"/>');
+      g.push('<circle cx="42" cy="59" r="22" fill="#0A0E1A" stroke="#8A95AD" stroke-width="3"/>');
+      g.push('<text x="42" y="104" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8A95AD">RANURA</text>');
+      if (paso >= 2) g.push('<path d="M196 30q44 -22 88 0v58q-44 22 -88 0z" fill="#B98A55" opacity=".9"/>');
+      g.push('<rect x="208" y="34" width="64" height="50" rx="4" fill="#D8DEE9"/>');
+      g.push('<path d="M216 44h48M216 54h48M216 64h48M216 74h48" stroke="#8A95AD" stroke-width="2"/>');
+      if (paso >= 1) g.push('<rect x="198" y="26" width="84" height="66" rx="12" fill="#BFD9F2" opacity=".4" stroke="#DCEBFA" stroke-width="1.5"/>');
+      if (paso >= 3) g.push('<path d="M196 40h88M196 78h88" stroke="#9AA3B2" stroke-width="7" opacity=".95"/>');
+      if (paso >= 4) g.push('<path d="M198 59c-40 0 -50 -26 -84 -14s-28 14 -50 14" fill="none" stroke="#E8EDF7" stroke-width="9" stroke-linecap="round"/>' +
+        '<path d="M198 59c-40 0 -50 -26 -84 -14s-28 14 -50 14" fill="none" stroke="#8A95AD" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 7"/>');
+      if (paso < 4) g.push('<text x="134" y="64" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="22" fill="#EF6B4A">≠</text>');
+      $("fl-b").innerHTML = g.join("");
+    }
+
+    function pintarBandeja() {
+      var caja = $("fl-bandeja");
+      caja.innerHTML = "";
+      orden.forEach(function (p) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "pieza"; b.setAttribute("data-id", p.id);
+        b.innerHTML = '<svg aria-hidden="true"><use href="#p-' + p.id + '"></use></svg><span>' + revolver(p.n, nivel()) + "</span>";
+        b.addEventListener("click", function () { tocar(p.id, b); });
+        caja.appendChild(b);
+      });
+    }
+
+    function pintarPedido() {
+      if (paso >= 4) return;
+      var p = PIEZAS.filter(function (x) { return x.id === PASOS[paso]; })[0];
+      $("fl-paso").textContent = "Paso " + (paso + 1) + " de 4 · " + PARA[p.id];
+      $("fl-pide").textContent = revolver(p.n.toUpperCase(), nivel());
+    }
+
+    function tocar(id, boton) {
+      if (fin || paso >= 4) return;
+      if (id === PASOS[paso]) {
+        paso++;
+        pintarBuzon();
+        if (paso >= 4) return faseSello();
+        if (nivel() >= 1) barajar(orden);   // con CO2 alto, hasta las piezas "se mueven"
+        pintarBandeja(); pintarPedido();
+        $("fl-n").textContent = "Afirmativo. Siguiente.";
+      } else {
+        co2 = Math.min(100, co2 + 7);
+        boton.classList.add("mal");
+        $("fl-n").textContent = "Negativo. Eso no va ahí. El aire empeora.";
+      }
+    }
+
+    function faseSello() {
+      $("fl-paso").textContent = "Último paso";
+      $("fl-pide").textContent = "¡SÉLLALO!";
+      $("fl-bandeja").style.filter = "";
+      $("fl-bandeja").style.gridTemplateColumns = "1fr";
+      $("fl-bandeja").innerHTML = '<button class="btn sellar" id="fl-s" type="button"><i id="fl-si"></i><span>Mantén presionado para pegar la cinta</span></button>';
+      $("fl-n").textContent = "No sueltes hasta que cierre.";
+      var b = $("fl-s");
+      b.addEventListener("pointerdown", function (e) { sellando = true; b.setPointerCapture(e.pointerId); });
+      b.addEventListener("pointerup", function () { sellando = false; });
+      b.addEventListener("pointercancel", function () { sellando = false; });
+      b.addEventListener("keydown", function (e) { if (e.key === " " || e.key === "Enter") sellando = true; });
+      b.addEventListener("keyup", function () { sellando = false; });
+    }
+
+    var nivelPrevio = 0;
+    function cuadro(ahora) {
+      var dt = Math.min(0.05, (ahora - ultimo) / 1000); ultimo = ahora;
+      if (fin) return;
+      co2 = Math.min(100, co2 + 3.3 * dt);
+
+      var n = nivel();
+      if (n !== nivelPrevio && paso < 4) {
+        nivelPrevio = n;
+        $("fl-bandeja").style.filter = n === 3 ? "blur(2.2px)" : n === 2 ? "blur(1.1px)" : "";
+        pintarBandeja(); pintarPedido();
+        if (n === 1) $("fl-n").textContent = "Empiezas a sentirte pesado…";
+        if (n === 3) $("fl-n").textContent = "Todo se ve borroso. ¡Rápido!";
+      }
+
+      if (paso >= 4) {
+        sello = sellando ? Math.min(1, sello + dt / 1.3) : Math.max(0, sello - dt * 1.5);
+        var si = $("fl-si"); if (si) si.style.width = (sello * 100) + "%";
+        if (sello >= 1) { fin = true; return resultado("filtro", true, co2); }
+      }
+
+      var barra = $("fl-c");
+      barra.style.width = co2 + "%";
+      barra.style.background = co2 > 80 ? "var(--alert)" : co2 > 55 ? "var(--sun)" : "var(--life)";
+      $("fl-p").textContent = Math.round(co2) + "%";
+
+      if (co2 >= 100) { fin = true; return resultado("filtro", false, co2); }
+      anim = requestAnimationFrame(cuadro);
+    }
+
+    barajar(orden);
+    pintarBuzon(); pintarBandeja(); pintarPedido();
+    abrir("co2");
+    anim = requestAnimationFrame(cuadro);
+  }
+
+  /* ==========================================================
+     RESULTADO — el minijuego sale bien o mal, y la rama que
+     NO elegiste también cobra (costo diferido).
+     ========================================================== */
+  function resultado(rama, bien, dato) {
+    parar();
+    var fx, titulo, texto, real;
+    if (rama === "polvo") {
+      fx = bien ? { energia: 25, oxigeno: -12 } : { energia: 6, oxigeno: -12 };
+      titulo = bien ? "¡Panel limpio!" : "Se acabó el tiempo.";
+      texto = bien
+        ? "Los paneles vuelven a rendir. Pero el filtro de aire se quedó otro día sin cambiar."
+        : "Solo quedó limpio al " + Math.round(dato * 100) + "%. Y el filtro de aire sigue sin cambiar.";
+      real = "En 2021 la NASA limpió un panel del módulo InSight, en Marte, echándole arena encima. El viento arrastró los granos y estos tumbaron el polvo fino.";
+      abrir("arena");
+    } else {
+      fx = bien ? { oxigeno: 6, energia: -10 } : { oxigeno: -26, tripulacion: -12, energia: -10 };
+      titulo = bien ? "¡Adaptador sellado!" : "El aire se puso irrespirable.";
+      texto = bien
+        ? "El filtro cuadrado ya limpia el aire por la ranura redonda. Pero los paneles siguen sucios."
+        : "La tripulación se mareó antes de terminar. Y los paneles siguen sucios.";
+      real = "En el Apolo 13, tres astronautas armaron este mismo adaptador con bolsas, cartón, cinta gris y una manguera, siguiendo instrucciones por radio. Le decían «el buzón».";
+      abrir("buzon");
+    }
+
+    var NOM = { energia: "Energía", oxigeno: "Oxígeno", tripulacion: "Tripulación" };
+    var chips = "";
+    for (var k in fx) {
+      if (!fx.hasOwnProperty(k)) continue;
+      if (k === "energia") S.energia = Math.max(0, S.energia + fx[k]); else S[k] = lim(S[k] + fx[k]);
+      chips += '<span class="chip ' + (fx[k] > 0 ? "mas" : "menos") + '">' + NOM[k] + " " + (fx[k] > 0 ? "+" : "") + fx[k] + "</span>";
+    }
+    $("t-pista").style.width = "12.5%";
+    pintar();
+
+    var otra = rama === "polvo" ? "filtro" : "polvo";
+    campo.innerHTML =
+      '<div class="carta" style="text-align:center">' +
+      '<div class="dice" style="font-size:1.45rem;color:' + (bien ? "var(--life)" : "var(--alert)") + '">' + titulo + "</div>" +
+      '<p class="lead">' + texto + "</p>" +
+      '<div class="efectos">' + chips + "</div>" +
+      '<div class="real" style="text-align:left"><b>Pasó de verdad</b>' + real + "</div>" +
+      '<button class="btn" type="button" data-a="otra">Probar la otra decisión</button>' +
+      '<button class="btn sec" type="button" data-a="igual">Repetir este minijuego</button>' +
+      "</div>";
+    campo.querySelector('[data-a="otra"]').addEventListener("click", function () { reiniciar(); instruccion(otra); });
+    campo.querySelector('[data-a="igual"]').addEventListener("click", function () { reiniciar(); instruccion(rama); });
+  }
+
+  /* ---------- arranque ---------- */
+  function reiniciar() {
+    var abiertas = S ? S.abiertas : {};
+    S = { energia: 40, oxigeno: 100, comida: 100, tripulacion: 100, abiertas: abiertas };
+    $("t-pista").style.width = "0%";
+    pintar(); pintarHitos();
+  }
+
+  reiniciar();
+  decision();
+})();
+</script>
