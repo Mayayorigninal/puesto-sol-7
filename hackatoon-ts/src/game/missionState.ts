@@ -12,6 +12,12 @@ export const systemLabels = {
 }
 
 function missionEffects(mission: Mission, success: boolean) {
+  if (mission === 'fugas') {
+    return [
+      { system: 'oxigeno', amount: success ? -5 : -35 },
+      { system: 'tripulacion', amount: success ? 0 : -15 },
+    ] as const
+  }
   if (mission === 'polvo') {
     return [
       { system: 'energia', amount: success ? 25 : 6 },

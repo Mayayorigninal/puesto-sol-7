@@ -10,6 +10,8 @@ export const calendar = [
   ] as const
 
 export const milestones = [
+    { id: "fuga", title: "¡Tenemos una fuga!", description: "El casco de la cabina perdió su sello. Cada agujero abierto reduce el oxígeno disponible en el minijuego.", source: "Bitácora del Puesto Sol 7" },
+    { id: "parche", title: "Reparación de emergencia", description: "Mantener presionado un parche permite fijarlo. Si lo sueltas antes de tiempo, la fuga vuelve a abrirse.", source: "Manual de BIP · simulación" },
     { id: "polvo", title: "Polvo lunar", description: "No es tierra normal: es vidrio molido. Como en la Luna no hay viento ni agua, cada granito sigue teniendo filos. Se pega con electricidad estática, por eso si lo frotas vuelve.", source: "NASA — misiones Apolo" },
     { id: "arena", title: "Limpiar con arena", description: "En Marte, el módulo InSight se estaba quedando sin energía por el polvo. La solución fue echarle arena encima: el viento arrastró los granos gruesos y estos tumbaron el polvo fino.", source: "NASA/JPL — misión InSight, 2021" },
     { id: "co2", title: "El aire que exhalas", description: "Lo peligroso no es quedarte sin oxígeno: es que el aire que sacas (CO₂) se quede contigo. Y antes de hacerte daño te pone torpe y con sueño.", source: "NASA — soporte vital" },

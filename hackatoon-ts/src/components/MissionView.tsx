@@ -1,3 +1,4 @@
+import { LeakGame } from '../game/leaks/LeakGame'
 import type { Dispatch } from 'react'
 import { DustGame } from '../game/dust/DustGame'
 import { FilterGame } from '../game/filter/FilterGame'
@@ -16,7 +17,7 @@ export function MissionView({ phase, dispatch }: MissionViewProps) {
       <div className="carta">
         <Icon name="i-bip" className="grande" />
         <div className="quien">BIP · protocolo de mantenimiento</div>
-        <h2 className="dice">Capitán, hay dos pendientes y la tripulación solo alcanza para uno hoy. El reglamento dice que elige usted.</h2>
+        <h2 className="dice">Capitán, hay varios pendientes y la tripulación solo alcanza para uno hoy. El reglamento dice que elige usted.</h2>
         <div className="ops">
           {missionOptions.map((mission) => (
             <button key={mission} className="op" type="button" onClick={() => dispatch({ type: 'choose', mission })}>
@@ -41,13 +42,14 @@ export function MissionView({ phase, dispatch }: MissionViewProps) {
 
   if (phase.type === 'playing') {
     const onFinish = (success: boolean, value: number) => dispatch({ type: 'finish', success, value })
+    if (phase.mission === 'fugas') return <LeakGame onFinish={onFinish} />
     return phase.mission === 'polvo'
       ? <DustGame onFinish={onFinish} onSand={() => dispatch({ type: 'discover', milestone: 'arena' })} />
       : <FilterGame onFinish={onFinish} />
   }
 
   const { success, value, effects } = phase
-  const other = phase.mission === 'polvo' ? 'filtro' : 'polvo'
+  const other = missionOptions[(missionOptions.indexOf(phase.mission) + 1) % missionOptions.length]
   return (
     <div className="carta carta-centrada">
       <h2 className="dice" style={{ fontSize: '1.45rem', color: success ? 'var(--life)' : 'var(--alert)' }}>
@@ -61,8 +63,8 @@ export function MissionView({ phase, dispatch }: MissionViewProps) {
           </span>
         ))}
       </div>
-      <div className="real"><b>Pasó de verdad</b>{mission.fact}</div>
-      <button className="btn" type="button" onClick={() => dispatch({ type: 'retry', mission: other })}>Probar la otra decisión</button>
+      <div className="real"><b>{phase.mission === 'fugas' ? 'Bitácora de BIP' : 'Pasó de verdad'}</b>{mission.fact}</div>
+      <button className="btn" type="button" onClick={() => dispatch({ type: 'retry', mission: other })}>Probar otra decisión</button>
       <button className="btn sec" type="button" onClick={() => dispatch({ type: 'retry', mission: phase.mission })}>Repetir este minijuego</button>
     </div>
   )

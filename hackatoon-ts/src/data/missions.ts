@@ -1,4 +1,17 @@
 export const missions = {
+  fugas: {
+    option: '¡Tapar las fugas!',
+    detail: 'El casco se está perforando. Mantén tapados los agujeros antes de perder el oxígeno.',
+    title: '¡La nave pierde aire!',
+    instructions: 'Mantén pulsado cada agujero durante un momento para pegar un parche. Al soltar antes de tiempo, vuelve a escapar aire. Sella los 9 antes de quedarte sin oxígeno. Con ratón, ve uno por uno; en móvil puedes usar varios dedos.',
+    success: '¡Cabina sellada!',
+    failure: '¡Evacuación de emergencia!',
+    successText: 'Todos los parches aguantan. La tripulación ya puede respirar tranquila.',
+    failureText: () => 'BIP cerró la cabina para proteger el resto de la nave. Hay que reparar el casco antes de volver.',
+    fact: 'En esta simulación, mantener tapada una fuga detiene la pérdida de aire mientras se fija el parche.',
+    discovery: 'fuga',
+    completion: 'parche',
+  },
   polvo: {
     option: 'Limpiar los paneles',
     detail: 'Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.',
@@ -28,4 +41,4 @@ export const missions = {
 } as const
 
 export type Mission = keyof typeof missions
-export const missionOptions = ['polvo', 'filtro'] as const satisfies readonly Mission[]
+export const missionOptions = ['polvo', 'filtro', 'fugas'] as const satisfies readonly Mission[]
