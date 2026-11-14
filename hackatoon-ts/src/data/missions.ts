@@ -12,6 +12,19 @@ export const missions = {
     discovery: 'fuga',
     completion: 'parche',
   },
+  parches: {
+    option: 'Encajar los parches',
+    detail: 'Unos micrometeoritos perforaron el casco. Cada agujero tiene su forma: gira el parche hasta que encaje.',
+    title: '¡Encaja los parches!',
+    instructions: 'Toca cada parche para girarlo 90°. Cuando su forma coincide con la del agujero, queda sellado. Mientras no encaje, el aire se sigue escapando. Sella los 8 antes de que se acabe el oxígeno.',
+    success: '¡Casco sellado!',
+    failure: 'Nos quedamos sin aire.',
+    successText: 'Cada parche quedó en su lugar y el oxígeno dejó de escaparse.',
+    failureText: (oxygen: number) => `BIP cerró la cabina con ${Math.round(oxygen)}% de oxígeno. Hay que volver a parchar el casco.`,
+    fact: 'En agosto de 2018 la Estación Espacial Internacional empezó a perder aire por un agujero de 2 mm en la nave Soyuz MS-09. Alexander Gerst lo tapó primero con el dedo; después lo cubrieron con cinta y lo sellaron con una gasa empapada en resina epóxica. Al principio se pensó en un micrometeorito, pero resultó ser un agujero de taladro.',
+    discovery: 'micrometeorito',
+    completion: 'soyuz',
+  },
   polvo: {
     option: 'Limpiar los paneles',
     detail: 'Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.',
@@ -41,4 +54,4 @@ export const missions = {
 } as const
 
 export type Mission = keyof typeof missions
-export const missionOptions = ['polvo', 'filtro', 'fugas'] as const satisfies readonly Mission[]
+export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches'] as const satisfies readonly Mission[]

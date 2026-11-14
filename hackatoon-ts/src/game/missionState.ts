@@ -18,6 +18,12 @@ function missionEffects(mission: Mission, success: boolean) {
       { system: 'tripulacion', amount: success ? 0 : -15 },
     ] as const
   }
+  if (mission === 'parches') {
+    return [
+      { system: 'oxigeno', amount: success ? -8 : -30 },
+      { system: 'tripulacion', amount: success ? 0 : -10 },
+    ] as const
+  }
   if (mission === 'polvo') {
     return [
       { system: 'energia', amount: success ? 25 : 6 },

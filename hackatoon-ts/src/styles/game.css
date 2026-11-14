@@ -309,3 +309,43 @@ nav button:focus-visible { outline: 2px solid var(--sun); outline-offset: -3px; 
 @keyframes escaping-air { from { opacity: .8; transform: translateY(8px) scale(.7); } to { opacity: 0; transform: translateY(-20px) scale(1.2); } }
 @media (prefers-reduced-motion: reduce) { .breach-open .breach-air { animation: none; opacity: .6; } }
 @media (min-width: 1024px) { .ops > :last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+/* ---- parches (tap to rotate) ---- */
+.patch-slot {
+  position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
+  width: 19%; aspect-ratio: 1; padding: 0; border: 0; border-radius: 18%;
+  background: radial-gradient(circle, #0a122388 0 55%, transparent 72%);
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.patch-slot svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.patch-slot g { transform-box: view-box; transform-origin: 50% 50%; }
+.patch-hole polygon { fill: #02050e; stroke: #ef6b4a; stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 5 3; }
+.patch-plate { transition: transform .16s cubic-bezier(.3, 1.6, .5, 1); }
+.patch-plate polygon { fill: #9aaabd; fill-opacity: .82; stroke: #e2ebf5; stroke-width: 3; stroke-linejoin: round; }
+.patch-slot:active .patch-plate polygon { fill: #b9c7d6; }
+.patch-leaking { animation: patch-shake .35s infinite; }
+.patch-sealed { cursor: default; animation: patch-pop .3s ease-out; }
+.patch-sealed .patch-hole polygon { stroke: transparent; }
+.patch-sealed .patch-plate polygon { fill: #6f8aa0; fill-opacity: 1; stroke: var(--life); }
+.patch-slot:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+.patch-air {
+  pointer-events: none; position: absolute; left: 30%; top: -18%; width: 40%; height: 55%;
+  border-inline: 2px solid #bfeaffaa; border-radius: 40%; opacity: 0;
+  animation: escaping-air .6s infinite ease-out;
+}
+@keyframes patch-shake {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(calc(-50% + 1px), calc(-50% - 1px)); }
+}
+@keyframes patch-pop {
+  from { transform: translate(-50%, -50%) scale(1.15); }
+  to { transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .patch-leaking, .patch-sealed { animation: none; }
+  .patch-air { animation: none; opacity: .6; }
+}
+@media (min-width: 768px) {
+  /* Que el casco quepa completo en pantallas bajas de laptop sin tener que hacer scroll. */
+  .patch-game { max-width: clamp(360px, calc((100dvh - 400px) * 1.35), 720px); }
+}

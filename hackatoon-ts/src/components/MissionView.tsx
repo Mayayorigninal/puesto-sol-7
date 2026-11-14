@@ -1,4 +1,5 @@
 import { LeakGame } from '../game/leaks/LeakGame'
+import { PatchGame } from '../game/patches/PatchGame'
 import type { Dispatch } from 'react'
 import { DustGame } from '../game/dust/DustGame'
 import { FilterGame } from '../game/filter/FilterGame'
@@ -43,6 +44,7 @@ export function MissionView({ phase, dispatch }: MissionViewProps) {
   if (phase.type === 'playing') {
     const onFinish = (success: boolean, value: number) => dispatch({ type: 'finish', success, value })
     if (phase.mission === 'fugas') return <LeakGame onFinish={onFinish} />
+    if (phase.mission === 'parches') return <PatchGame onFinish={onFinish} />
     return phase.mission === 'polvo'
       ? <DustGame onFinish={onFinish} onSand={() => dispatch({ type: 'discover', milestone: 'arena' })} />
       : <FilterGame onFinish={onFinish} />
