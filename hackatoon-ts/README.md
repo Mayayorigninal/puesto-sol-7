@@ -1,4 +1,6 @@
-# Puesto Sol 7
+# Puesto Sol 7 — código del juego
+
+> La descripción completa del proyecto, los datos de la NASA, los créditos y el uso de IA están en el [README principal](../README.md).
 
 Juego para el reto **Build a Junior Astronaut Mission Trainer** (NASA Space Apps Challenge 2026).
 Diriges un puesto en la Luna durante 8 soles. Cada sol ves el **clima espacial real** de ese día y decides en qué gastar la energía: en blindaje (seguridad) o en experimentos (avanzar la misión). Nunca alcanza para todo.
@@ -50,3 +52,8 @@ Los catálogos están en `src/i18n/EN/En.json` y `src/i18n/ES/Es.json`. Usa la m
 - `scripts/balance.ts` — simulador de balance.
 
 `npm run lint` revisa el código y `npm run build` compila la aplicación.
+
+## Créditos de arte
+
+- Corazón, astronauta, batería, tanque de O₂ y paneles solares: dibujos originales de Joseph Ruiz.
+- Plantas y macetas del invernadero: [FREE Pixel Art Flower Pack](https://karsiori.itch.io/free-pixel-art-flower-pack) de Karsiori, licencia CC0 (ver `public/assets/granja/LICENCIA.txt`).

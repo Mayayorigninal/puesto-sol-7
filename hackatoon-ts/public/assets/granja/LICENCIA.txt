@@ -1,0 +1,9 @@
+Sprites de plantas y macetas: "FREE Pixel Art Flower Pack" de Karsiori.
+https://karsiori.itch.io/free-pixel-art-flower-pack
+Licencia: Creative Commons Zero v1.0 Universal (CC0, dominio público).
+
+Archivos usados (renombrados):
+- maceta.png          <- Empty Flower Pots/Flower Pot 2 - RED.png
+- planta-creciendo.png <- Bush 1 (No Flowers)/Bush 1 (no flowers) - GREEN.png
+- planta-lista.png     <- Bush 1/Bush 1 - GREEN.png
+- planta-seca.png      <- Bush 1 (No Flowers)/Bush 1 (no flowers) - WARM GREEN.png

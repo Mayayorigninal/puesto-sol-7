@@ -1,5 +1,6 @@
 import { useTranslation } from '../i18n/useTranslation'
-import { rules, type Resources, type RiskLevel } from '../game/rules.ts'
+
+import { forecastHidden, rules, type Resources, type RiskLevel } from '../game/rules.ts'
 
 export type StormView = 'no' | 'detenida' | 'golpe'
 
@@ -61,7 +62,9 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
   const flare = flareSize[risk]
   const cells = 6
   const dustLevel = Math.min(dust, rules.recharge)
-  const wearColor = wear >= rules.wearLimit ? '#EF6B4A' : wear === 1 ? '#F2B134' : '#3FC9A0'
+  // Luz del soporte vital: verde al día, amarilla con 1 sol sin revisión, roja si mañana ya hace daño.
+  const wearAlert = wear >= rules.wearLimit - 1
+  const wearColor = wearAlert ? '#EF6B4A' : wear >= 1 ? '#F2B134' : '#3FC9A0'
   const done = experimenting ? science - 1 : science
 
   const label = [
@@ -114,6 +117,13 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
         {Array.from({ length: Math.min(science, rules.sols) }, (_, i) => <Instrument key={i} index={i} ghost={experimenting && i === done} />)}
       </g>
 
+      {/* antena de comunicaciones: luz verde con señal, roja sin pronóstico */}
+      <g transform="translate(206 94)">
+        <path d="M0 0v-14" stroke="#C9D1E0" strokeWidth="2.200" strokeLinecap="round" />
+        <path d="M-7 -20q7 7 14 0Z" fill="#D8DEE9" stroke="#27314A" strokeWidth="1" transform="rotate(25 0 -17)" />
+        <circle cy="-24" r="2.600" fill={forecastHidden(resources) ? '#EF6B4A' : resources.silence > 0 ? '#F2B134' : '#3FC9A0'} className={forecastHidden(resources) ? 'luz-alerta' : undefined} />
+      </g>
+
       {/* cuartos bajo el regolito */}
       <g className="cuartos" fontFamily="var(--data)" fontSize="7" letterSpacing=".6" fill="#8A95AD">
         <rect className="cuarto" x="16" y="114" width="160" height="70" rx="12" />
@@ -146,7 +156,7 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
       {/* soporte vital: la luz avisa cuánto lleva sin mantenimiento */}
       <g transform="translate(54 236)">
         <image href={`${import.meta.env.BASE_URL}assets/tanque-o2.png`} x="-14" y="-24" width="28" height="37" />
-        <circle className={wear >= rules.wearLimit ? 'luz-alerta' : ''} cx="24" cy="-12" r="5" fill={wearColor} />
+        <circle className={wearAlert ? 'luz-alerta' : ''} cx="24" cy="-12" r="5" fill={wearColor} />
       </g>
 
       {/* refugio */}

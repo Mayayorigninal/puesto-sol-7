@@ -1,7 +1,7 @@
 import { useTranslation } from '../i18n/useTranslation'
 import { useState } from 'react'
 import { spaceWeather } from '../data/spaceWeather.ts'
-import { applyPlan, canAfford, planCost, rules, stormRisk, type Plan, type Resources } from '../game/rules.ts'
+import { applyPlan, canAfford, forecastHidden, planCost, rules, stormRisk, type Plan, type Resources } from '../game/rules.ts'
 import { BaseScene } from './BaseScene'
 import { Icon, type IconName } from './Icon'
 import { WeatherReport } from './WeatherReport'
@@ -39,6 +39,7 @@ export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
   const { t, rich } = useTranslation()
   const [plan, setPlan] = useState<Plan>({ shield: false, experiment: false })
   const weather = spaceWeather[sol - 1]
+  const hidden = forecastHidden(resources)
   const risk = stormRisk(weather.flare)
   const left = resources.energy - planCost(plan)
 
@@ -54,8 +55,8 @@ export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
         <div className="eyebrow">{t('PREP.Sol', { sol, total: rules.sols })}</div>
         <h2 style={{ marginTop: 4 }}>{t('PREP.Title')}</h2>
       </div>
-      <BaseScene resources={applyPlan(resources, plan)} risk={risk.level} shield={plan.shield} experimenting={plan.experiment} />
-      <WeatherReport weather={weather} />
+      <BaseScene resources={applyPlan(resources, plan)} risk={hidden ? 'ninguno' : risk.level} shield={plan.shield} experimenting={plan.experiment} />
+      <WeatherReport weather={weather} hidden={hidden} />
       <div className="prep-ops">
         <Choice
           icon="i-shield" className="prep-blindaje" title={t('PREP.Shield')} cost={rules.shieldCost}
