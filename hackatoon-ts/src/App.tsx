@@ -6,6 +6,9 @@ import { MissionView } from './components/MissionView'
 import { useAudioStore } from './store/useAudioStore'
 import { useGameStore } from './store/useGameStore'
 
+// La música suena a la mitad: con el control al 100, el volumen real es 50%.
+const musicGain = 0.5
+
 export default function App() {
   const { t, rich, language } = useTranslation()
   const [active, setActive] = useState<Tab>('mision')
@@ -24,7 +27,7 @@ export default function App() {
     const music = musicRef.current
     if (!music) return
 
-    music.volume = musicVolume / 100
+    music.volume = musicVolume / 100 * musicGain
     music.muted = musicVolume === 0
   }, [musicVolume])
 
