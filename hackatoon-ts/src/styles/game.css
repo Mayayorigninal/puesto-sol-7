@@ -459,3 +459,95 @@ nav button:focus-visible { outline: 2px solid var(--sun); outline-offset: -3px; 
   .bitacora li { font-size: .9rem; padding: 9px 14px; }
 }
 @media (min-width: 768px) and (max-width: 1023px) { .prep-ops { grid-template-columns: 1fr; } }
+
+.op-et { display: inline-block; font-family: var(--data); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; border-radius: 6px; padding: 1px 6px; margin-right: 6px; vertical-align: 1px; }
+.op-gana { color: var(--life); border: 1px solid var(--life); }
+.op-pierde { color: var(--alert); border: 1px solid var(--alert); }
+
+/* ---- pantallas angostas y celular horizontal ---- */
+.clima-riesgo { display: inline-block; margin-top: 5px; }
+.barra .et { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 359px) { .et-fecha { display: none; } }
+.girar { display: none; }
+/* Un celular acostado es ancho pero muy bajo: los minijuegos no caben. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .girar {
+    display: flex; position: fixed; inset: 0; z-index: 50; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 1.2rem; text-align: center; padding: 24px;
+  }
+  .girar svg { width: 54px; height: 54px; fill: none; stroke: var(--sun); stroke-width: 1.6; stroke-linecap: round; animation: girar 1.8s ease-in-out infinite; }
+  @keyframes girar { 0%, 25% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0deg); } }
+}
+@media (prefers-reduced-motion: reduce) { .girar svg { animation: none; } }
+
+/* ============ estilo redondo y de colores vivos ============ */
+.carta { border-radius: 22px; }
+.btn {
+  border-radius: 16px; font-family: var(--display); font-weight: 700; font-size: 1.05rem; letter-spacing: .03em; text-transform: uppercase;
+  box-shadow: 0 5px 0 #B47A12; transition: transform .06s, box-shadow .06s; margin-bottom: 5px;
+}
+.btn:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 0 0 #B47A12; }
+.btn.sec { box-shadow: 0 5px 0 var(--line); border-width: 2px; }
+.op, .prep-op { border-radius: 16px; border-width: 2px; box-shadow: 0 4px 0 var(--line); transition: transform .06s, box-shadow .06s; }
+.op:active, .prep-op:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--line); }
+.prep-ops, .ops { padding-bottom: 4px; }
+.prep-blindaje[aria-pressed="true"] { box-shadow: 0 4px 0 #23836B; }
+.prep-ciencia[aria-pressed="true"] { box-shadow: 0 4px 0 #3A6BB8; }
+.chip { font-family: var(--display); font-weight: 600; font-size: .8rem; border-width: 2px; padding: 4px 12px; }
+
+/* ---- la base en corte ---- */
+.base { display: block; width: 100%; height: auto; border-radius: 16px; background: #59627A; }
+.cuarto { fill: #151C2E; stroke: #2F3A55; stroke-width: 2; transition: fill .4s, stroke .4s; }
+.cuarto-refugio { stroke: #6B7690; stroke-width: 4; }
+.base-blindada .cuarto-refugio { fill: #12352F; stroke: #3FC9A0; }
+.base-blindada .txt-refugio { fill: #3FC9A0; }
+.escudo path { fill: #2F3A55; transition: fill .4s; }
+.base-blindada .escudo path { fill: #3FC9A0; }
+.astro { transition: transform .7s cubic-bezier(.5, 1.4, .5, 1); }
+.astro-mal { opacity: .4; }
+.astro-flota { animation: flotar 2.800s ease-in-out infinite; }
+.astro-mal .astro-flota { animation: none; }
+.instr-nuevo { animation: aparecer .6s cubic-bezier(.4, 1.8, .5, 1) both; transform-box: fill-box; transform-origin: 50% 100%; }
+.sol-llamarada { animation: llamarada 1.600s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.celda-llena { animation: aparecer .35s ease-out both; transform-box: fill-box; transform-origin: 50% 100%; }
+.luz-alerta { animation: latido .7s infinite; transform-box: fill-box; transform-origin: center; }
+.panel-brillo { animation: brillo 2.400s ease-in-out infinite; }
+.particulas path { opacity: 0; animation: caer 1.100s linear infinite; }
+.base-golpe .particulas path { animation-name: caer-fondo; }
+.base-golpe .cuarto:not(.cuarto-refugio) { animation: golpe .55s ease-in-out 4; }
+@keyframes flotar { 50% { transform: translateY(-2.500px); } }
+@keyframes aparecer { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes llamarada { 50% { opacity: .55; rotate: 15deg; } }
+@keyframes brillo { 0%, 60%, 100% { opacity: 0; } 75% { opacity: .9; } }
+@keyframes caer { 0% { opacity: 0; translate: 0 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; translate: -28px 100px; } }
+@keyframes caer-fondo { 0% { opacity: 0; translate: 0 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; translate: -60px 250px; } }
+@keyframes golpe { 50% { fill: #5A1F1A; stroke: #EF6B4A; } }
+
+/* ---- escala de fulguraciones ---- */
+.escala { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-items: end; padding-top: 22px; }
+.escala-col { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.escala-col i { display: block; width: 100%; border-radius: 7px 7px 3px 3px; background: var(--line); }
+.escala-col b { font-family: var(--display); font-size: .95rem; color: var(--muted); }
+.escala-x10 { position: absolute; left: -3px; bottom: 26px; translate: -50% 0; font-family: var(--data); font-size: .52rem; color: var(--muted); }
+.escala-col.hoy b { color: var(--ink); }
+.escala-B.hoy i { background: var(--life); } .escala-C.hoy i { background: var(--crop); }
+.escala-M.hoy i { background: var(--sun); } .escala-X.hoy i { background: var(--alert); }
+.clima-alto .escala-M.hoy i { background: var(--alert); }
+.escala-hoy { position: absolute; top: -21px; font-family: var(--display); font-weight: 700; font-size: .8rem; background: var(--ink); color: var(--bg); border-radius: 8px; padding: 1px 7px; white-space: nowrap; }
+.clima-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.clima-chips span { font-family: var(--data); font-size: .6rem; color: var(--ink); background: var(--panel); border-radius: 20px; padding: 4px 9px; }
+.clima-chips:empty { display: none; }
+p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
+.clima-mas summary { cursor: pointer; font-family: var(--display); font-weight: 600; font-size: .82rem; color: var(--shield); }
+.clima-mas .clima-datos { margin-top: 7px; }
+.clima { border-radius: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .astro, .astro-flota, .sol-llamarada, .panel-brillo, .luz-alerta, .instr-nuevo, .celda-llena, .base-golpe .cuarto { animation: none !important; transition: none !important; }
+  .particulas path { animation: none; opacity: .8; }
+}
+@media (min-width: 768px) {
+  .base { max-width: 520px; align-self: center; }
+  .escala { max-width: 420px; }
+  .clima-chips span { font-size: .7rem; }
+}

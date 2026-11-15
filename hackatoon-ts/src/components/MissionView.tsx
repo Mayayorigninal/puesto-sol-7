@@ -33,7 +33,7 @@ export function MissionView({ game, dispatch }: MissionViewProps) {
       return <ExperimentAnim science={resources.science} onDone={() => dispatch({ type: 'experimentDone' })} />
 
     case 'routine':
-      return <RoutineView sol={sol} resources={resources} onChoose={(mission) => dispatch({ type: 'choose', mission })} />
+      return <RoutineView sol={sol} resources={resources} shield={game.plan.shield} onChoose={(mission) => dispatch({ type: 'choose', mission })} />
 
     case 'instructions': {
       const mission = missions[phase.mission]

@@ -1,12 +1,13 @@
 import { donkiCredit } from '../data/spaceWeather.ts'
-import { rules } from '../game/rules.ts'
+import { initialResources, rules } from '../game/rules.ts'
+import { BaseScene } from './BaseScene'
 import { Icon } from './Icon'
 
 /** Pantalla inicial: explica la meta de la misión en tres líneas. */
 export function Intro({ onBegin }: { onBegin: () => void }) {
   return (
     <div className="carta carta-centrada">
-      <Icon name="i-bip" className="grande" />
+      <BaseScene resources={initialResources} />
       <div className="quien">BIP · computadora del puesto</div>
       <h2 className="dice">Capitán, bienvenido al Puesto Sol 7, en la Luna. Tenemos {rules.sols} soles de misión.</h2>
       <ul className="reglas">

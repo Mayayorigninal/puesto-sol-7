@@ -24,7 +24,7 @@ export function Hud({ sol, completed, resources }: HudProps) {
   return (
     <header className="top">
       <div className="barra">
-        <div className="et">SOL <b>{sol}</b> DE {rules.sols} · {fecha}</div>
+        <div className="et">SOL <b>{sol}</b> DE {rules.sols}<span className="et-fecha"> · {fecha}</span></div>
         <div className="pista" role="progressbar" aria-label="Progreso de la misión" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
           <i style={{ width: `${progress}%` }} />
         </div>

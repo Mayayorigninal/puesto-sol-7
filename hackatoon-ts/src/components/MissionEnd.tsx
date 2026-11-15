@@ -54,7 +54,7 @@ export function MissionEnd({ ending, resources, history, onRestart }: MissionEnd
               <Icon name="i-shield" className={plan.shield ? 'on-blindaje' : ''} />
               <Icon name="i-flask" className={plan.experiment ? 'on-ciencia' : ''} />
             </span>
-            <span className="bit-nota">{report.storm ? (report.stormDamage > 0 ? `Tormenta: −${report.stormDamage} ❤` : 'Tormenta detenida') : 'Sin tormenta'}</span>
+            <span className="bit-nota">{report.storm ? (report.stormDamage > 0 ? `Tormenta: −${report.stormDamage} ${report.stormDamage === 1 ? 'corazón' : 'corazones'}` : 'Tormenta detenida') : 'Sin tormenta'}</span>
           </li>
         ))}
       </ol>

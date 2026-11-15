@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { spaceWeather } from '../data/spaceWeather.ts'
-import { canAfford, planCost, rules, stormRisk, type Plan, type Resources } from '../game/rules.ts'
+import { applyPlan, canAfford, planCost, rules, stormRisk, type Plan, type Resources } from '../game/rules.ts'
+import { BaseScene } from './BaseScene'
 import { Icon, type IconName } from './Icon'
 import { WeatherReport } from './WeatherReport'
 
@@ -50,11 +51,12 @@ export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
         <div className="eyebrow">Sol {sol} de {rules.sols} · Preparación</div>
         <h2 style={{ marginTop: 4 }}>¿En qué gastamos la energía hoy?</h2>
       </div>
+      <BaseScene resources={applyPlan(resources, plan)} risk={risk.level} shield={plan.shield} experimenting={plan.experiment} />
       <WeatherReport weather={weather} />
       <div className="prep-ops">
         <Choice
           icon="i-shield" className="prep-blindaje" title="Activar el blindaje" cost={rules.shieldCost}
-          detail={risk.chance > 0 ? 'Si llega una tormenta de partículas, la tripulación está a salvo.' : 'Hoy no hay alerta: sería gastar energía de más.'}
+          detail={risk.chance > 0 ? 'La tripulación baja al refugio. Si llega una tormenta, está a salvo.' : 'Hoy no hay alerta: sería gastar energía de más.'}
           active={plan.shield} disabled={blocked('shield')} onToggle={() => toggle('shield')}
         />
         <Choice

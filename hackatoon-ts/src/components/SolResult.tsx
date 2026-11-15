@@ -1,4 +1,5 @@
 import { missions, type Mission } from '../data/missions'
+import { BaseScene } from './BaseScene'
 import { riskLabels, rules, type Resources, type SolReport } from '../game/rules.ts'
 
 type SolResultProps = {
@@ -21,7 +22,7 @@ function stormText({ risk, shielded, storm, stormDamage }: SolReport) {
   if (storm) {
     return shielded
       ? '¡Llegó una tormenta de partículas! El blindaje protegió a toda la tripulación.'
-      : `¡Llegó una tormenta de partículas y no había blindaje! La tripulación pierde ${stormDamage} ❤.`
+      : `¡Llegó una tormenta de partículas y no había blindaje! La tripulación pierde ${stormDamage} ${stormDamage === 1 ? 'corazón' : 'corazones'}.`
   }
   return shielded
     ? 'La tormenta de partículas no llegó. El blindaje no hizo falta esta vez… pero nadie podía saberlo.'
@@ -38,6 +39,10 @@ export function SolResult({ sol, mission, value, report, resources, last, onNext
   return (
     <div className="carta carta-centrada">
       <div className="eyebrow">Sol {sol} de {rules.sols} · Resultado</div>
+      <BaseScene
+        resources={resources} risk={risk.level} shield={report.shielded}
+        storm={!report.storm ? 'no' : stormDamage > 0 ? 'golpe' : 'detenida'}
+      />
       <h2 className="dice" style={{ fontSize: '1.45rem', color: success ? 'var(--life)' : 'var(--alert)' }}>
         {success ? info.success : info.failure}
       </h2>
@@ -51,7 +56,7 @@ export function SolResult({ sol, mission, value, report, resources, last, onNext
       {wearDamage > 0 && (
         <div className="noche noche-mal">
           <b>Soporte vital</b>
-          Van {rules.wearLimit} soles o más sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 ❤.
+          Van {rules.wearLimit} soles o más sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 corazón.
         </div>
       )}
 
