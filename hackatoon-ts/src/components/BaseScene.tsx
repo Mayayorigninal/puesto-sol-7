@@ -126,12 +126,13 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
         <text x="26" y="205">SOPORTE VITAL</text><text x="194" y="205" className="txt-refugio">REFUGIO</text>
       </g>
 
-      {/* baterías: una celda por punto de energía */}
+      {/* baterías: una por punto de energía (dibujo de Joseph: public/assets/bateria.png) */}
       {Array.from({ length: cells }, (_, i) => (
-        <g key={i} transform={`translate(${28 + i * 15} 136)`}>
-          <rect width="11" height="26" rx="3" fill={i < energy ? '#F2B134' : '#2A3348'} className={i < energy ? 'celda-llena' : ''} />
-          <rect x="3" y="-3" width="5" height="4" rx="1.500" fill={i < energy ? '#F2B134' : '#2A3348'} />
-        </g>
+        <image
+          key={i} href={`${import.meta.env.BASE_URL}assets/bateria.png`}
+          x={24 + i * 15} y="133" width="14" height="22"
+          className={i < energy ? 'celda-llena' : 'celda-vacia'}
+        />
       ))}
       {energy > cells && <text x="28" y="176" fontFamily="var(--display)" fontSize="10" fontWeight="700" fill="#F2B134">+{energy - cells}</text>}
 

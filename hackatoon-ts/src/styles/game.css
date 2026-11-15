@@ -559,3 +559,4 @@ p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
 @media (min-width: 768px) { .rec-trip img.corazon { width: 22px; height: 22px; } }
 .astro-mal image { filter: grayscale(1) brightness(.8); }
 .astro-mal .astro-flota { transform: rotate(-80deg) translate(-8px, 2px); }
+.base .celda-vacia { filter: grayscale(1) brightness(1.4); opacity: .3; }
