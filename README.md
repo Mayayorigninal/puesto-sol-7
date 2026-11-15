@@ -65,6 +65,7 @@ Built with React, TypeScript, Vite and Zustand.
 
 - **Game design, art direction and original drawings** (heart, astronaut, battery, oxygen tank, solar panels): Joseph Fernando Ruiz López.
 - **Plant and pot sprites:** [FREE Pixel Art Flower Pack](https://karsiori.itch.io/free-pixel-art-flower-pack) by Karsiori — CC0 1.0.
+- **Music and sound effects:** Freesound. See [LICENSE](LICENSE) for individual credits, source links and licenses.
 - **Fonts:** Fredoka, Nunito and IBM Plex Mono (Google Fonts, SIL Open Font License).
 - **Data:** NASA DONKI, plus the NASA sources linked above.
 

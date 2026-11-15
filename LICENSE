@@ -31,9 +31,48 @@ Third-party materials (not covered by the MIT license above):
 - Plant and pot sprites in hackatoon-ts/public/assets/granja/:
   "FREE Pixel Art Flower Pack" by Karsiori — CC0 1.0 Universal (public domain).
   https://karsiori.itch.io/free-pixel-art-flower-pack
+- Music and sound effects from Freesound (local filenames are listed below).
 - Space weather data: NASA DONKI (Space Weather Database Of Notifications,
   Knowledge, Information), https://ccmc.gsfc.nasa.gov/tools/DONKI/
 - Fonts (Fredoka, Nunito, IBM Plex Mono) are loaded from Google Fonts under the
   SIL Open Font License 1.1; they are not included in this repository.
 - npm dependencies (React, Vite, Zustand, TypeScript, ESLint and others) keep
   their own licenses.
+
+Freesound audio credits
+
+Music in hackatoon-ts/public/music/:
+
+- Ambient-Sound.wav — "Back From Space" by JoshKeyLowF, CC0 1.0 Universal.
+  https://freesound.org/people/JoshKeyLowF/sounds/727090/
+  https://creativecommons.org/publicdomain/zero/1.0/
+- Ambient-Sound-2.wav — "165 BPM Industrial Synth Loop #13561 (WAV)" by
+  looplicator, CC BY 4.0 International. Renamed for the game.
+  https://freesound.org/people/looplicator/sounds/796129/
+  https://creativecommons.org/licenses/by/4.0/
+- Ambient-Sound-3.wav — "150 BPM Industrial Synth Loop #12988 (WAV)" by
+  looplicator, CC BY 4.0 International. Renamed for the game.
+  https://freesound.org/people/looplicator/sounds/783523/
+  https://creativecommons.org/licenses/by/4.0/
+- Musica-1-bg.ogg — "Louswan - Simple Magestic Choir Melody (Soulja Unit Edit)"
+  by SouljaUnit, CC0 1.0 Universal. The original melody, "Simple Majestic
+  Choir Melody (C minor, ~95 BPM)" by Louswan, is also CC0 1.0 Universal.
+  https://freesound.org/people/SouljaUnit/sounds/843337/
+  https://freesound.org/people/Louswan/sounds/843183/
+  https://creativecommons.org/publicdomain/zero/1.0/
+
+Sound effects in hackatoon-ts/public/sound/:
+
+- correct-sound.mp3 — "CorrectCh_New.mp3" by Gronkjaer, CC0 1.0 Universal.
+  https://freesound.org/people/Gronkjaer/sounds/654321/
+  https://creativecommons.org/publicdomain/zero/1.0/
+- wrong-sound.wav — "Game Sound Wrong.wav" by Bertrof, CC BY 3.0 Unported.
+  Renamed for the game.
+  https://freesound.org/people/Bertrof/sounds/131657/
+  https://creativecommons.org/licenses/by/3.0/
+
+Previously evaluated track (reference only):
+
+- "Short Track #4971 (Industraumatic)" by looplicator, CC0 1.0 Universal.
+  https://freesound.org/people/looplicator/sounds/879833/
+  https://creativecommons.org/publicdomain/zero/1.0/
