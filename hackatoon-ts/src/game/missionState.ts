@@ -12,10 +12,11 @@ export const taskKinds: Record<Mission, TaskKind> = {
   filtro: 'soporte',
   fugas: 'soporte',
   parches: 'soporte',
+  ejercicio: 'soporte',
 }
 
-/** Tarea de soporte vital que toca cada sol (la otra opción siempre son los paneles). */
-const supportRotation = ['filtro', 'parches', 'fugas'] as const satisfies readonly Mission[]
+/** Tarea de soporte vital y salud que toca cada sol (la otra opción siempre son los paneles). */
+const supportRotation = ['filtro', 'ejercicio', 'parches', 'fugas'] as const satisfies readonly Mission[]
 
 export function routineOptions(sol: number): readonly [Mission, Mission] {
   return ['polvo', supportRotation[(sol - 1) % supportRotation.length]]

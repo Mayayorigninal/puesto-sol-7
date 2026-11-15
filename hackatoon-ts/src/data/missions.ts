@@ -25,6 +25,19 @@ export const missions = {
     discovery: 'micrometeorito',
     completion: 'soyuz',
   },
+  ejercicio: {
+    option: 'Hacer ejercicio',
+    detail: 'Sin ejercicio, los huesos y los músculos se debilitan. Los paneles se quedan sin limpiar.',
+    title: '¡A correr!',
+    instructions: 'Toca la pantalla para saltar los cráteres. Si viene un meteorito, no saltes: pasa por arriba. En la Luna todo pesa 6 veces menos, así que los saltos son altos y lentos. Aguanta 20 segundos con menos de 3 tropiezos.',
+    success: '¡Rutina completa!',
+    failure: 'Demasiados tropiezos.',
+    successText: 'La tripulación terminó su ejercicio del día. Sus huesos y músculos lo agradecen.',
+    failureText: (meters: number) => `La carrera se cortó a los ${Math.round(meters)} metros. Sin ejercicio, la tripulación se debilita.`,
+    fact: 'En la Estación Espacial Internacional los astronautas hacen, en promedio, dos horas de ejercicio al día. Sin la gravedad de la Tierra, los huesos y los músculos se vuelven más pequeños y débiles. (En la realidad se ejercitan dentro de la nave, no afuera.)',
+    discovery: 'ejercicio',
+    completion: 'huesos',
+  },
   polvo: {
     option: 'Limpiar los paneles',
     detail: 'Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.',
@@ -54,4 +67,4 @@ export const missions = {
 } as const
 
 export type Mission = keyof typeof missions
-export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches'] as const satisfies readonly Mission[]
+export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches', 'ejercicio'] as const satisfies readonly Mission[]

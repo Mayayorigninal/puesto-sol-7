@@ -561,3 +561,13 @@ p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
 .astro-mal .astro-flota { transform: rotate(-80deg) translate(-8px, 2px); }
 .base .celda-vacia { filter: grayscale(1) brightness(1.4); opacity: .3; }
 .base .panel-muy-sucio { filter: brightness(.6) sepia(.5); }
+
+/* ---- ¡A correr! (ejercicio) ---- */
+.run-caja { cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+.run-caja canvas { aspect-ratio: 9 / 5; cursor: pointer; }
+.run-marcador { display: flex; justify-content: space-between; align-items: center; font-family: var(--data); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.run-tropiezos { display: flex; align-items: center; gap: 5px; }
+.run-tropiezos i { width: 11px; height: 11px; border-radius: 50%; background: var(--panel-2); border: 2px solid var(--line); }
+.run-tropiezos i.usado { background: var(--alert); border-color: var(--alert); }
+.run-saltar { touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.mj-nota b { color: var(--ink); }
