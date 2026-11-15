@@ -41,16 +41,10 @@ export default function App() {
   useEffect(() => {
     for (const music of [ambientMusicRef.current, minigameMusicRef.current]) {
       if (!music) continue
-      music.volume = musicVolume / 100
+      music.volume = musicVolume / 100 * musicGain
       music.muted = musicVolume === 0
     }
   }, [musicVolume, minigameTrack])
-    const music = musicRef.current
-    if (!music) return
-
-    music.volume = musicVolume / 100 * musicGain
-    music.muted = musicVolume === 0
-  }, [musicVolume])
 
   useEffect(() => {
     const music = isPlayingMinigame
