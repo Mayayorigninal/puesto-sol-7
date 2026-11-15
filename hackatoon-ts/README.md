@@ -1,4 +1,6 @@
-# Puesto Sol 7
+# Puesto Sol 7 — código del juego
+
+> La descripción completa del proyecto, los datos de la NASA, los créditos y el uso de IA están en el [README principal](../README.md).
 
 Juego para el reto **Build a Junior Astronaut Mission Trainer** (NASA Space Apps Challenge 2026).
 Diriges un puesto en la Luna durante 8 soles. Cada sol ves el **clima espacial real** de ese día y decides en qué gastar la energía: en blindaje (seguridad) o en experimentos (avanzar la misión). Nunca alcanza para todo.

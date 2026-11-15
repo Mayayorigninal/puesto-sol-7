@@ -21,7 +21,7 @@ export const missions = {
     failure: 'Nos quedamos sin aire.',
     successText: 'Cada parche quedó en su lugar y el oxígeno dejó de escaparse.',
     failureText: (oxygen: number) => `BIP cerró la cabina con ${Math.round(oxygen)}% de oxígeno. Hay que volver a parchar el casco.`,
-    fact: 'En agosto de 2018 la Estación Espacial Internacional empezó a perder aire por un agujero de 2 mm en la nave Soyuz MS-09. Alexander Gerst lo tapó primero con el dedo; después lo cubrieron con cinta y lo sellaron con una gasa empapada en resina epóxica. Al principio se pensó en un micrometeorito, pero resultó ser un agujero de taladro.',
+    fact: 'En agosto de 2018 la Estación Espacial Internacional empezó a perder aire por un agujero de unos 2 mm en la nave Soyuz MS-09. La tripulación lo tapó primero con cinta y después lo selló con una gasa empapada en resina epóxica. Al principio se pensó en un micrometeorito, pero el agujero se había hecho en la Tierra, antes del lanzamiento.',
     discovery: 'micrometeorito',
     completion: 'soyuz',
   },
