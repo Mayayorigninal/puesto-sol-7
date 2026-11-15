@@ -1,6 +1,7 @@
 # Puesto Sol 7
 
-Prototipo en React y TypeScript para probar las dos decisiones del Sol 1.
+Juego para el reto **Build a Junior Astronaut Mission Trainer** (NASA Space Apps Challenge 2026).
+Diriges un puesto en la Luna durante 8 soles. Cada sol ves el **clima espacial real** de ese día y decides en qué gastar la energía: en blindaje (seguridad) o en experimentos (avanzar la misión). Nunca alcanza para todo.
 
 ## Ejecutar
 
@@ -9,12 +10,36 @@ npm ci
 npm run dev
 ```
 
-Abre la dirección que imprima Vite. En **Misión** puedes limpiar los paneles o cambiar el filtro de aire. **Estado** muestra los cambios en el puesto y **Hitos** reúne las fichas descubiertas. Al repetir o probar la otra opción se restauran los recursos iniciales y se conservan las fichas. Zustand guarda recursos, resultados e hitos en localStorage. Si recargas durante un minijuego, regresas a sus instrucciones para iniciar un nuevo intento.
+Abre la dirección que imprima Vite.
 
-- `src/components` contiene las vistas y los elementos compartidos.
-- `src/data` contiene el calendario, las fichas y los textos de prueba.
-- `src/game` contiene el estado de la misión y la lógica de cada minijuego.
-- `src/styles` contiene los estilos responsivos para móvil, tablet y escritorio.
-- `src/store` contiene el estado global y su persistencia con Zustand.
+## Cómo se juega
+
+Cada sol tiene tres pasos:
+
+1. **Preparación.** Ves el reporte de clima espacial y gastas energía en blindaje, en un experimento, en los dos o en nada.
+2. **Rutina.** Eliges una de dos tareas y juegas su minijuego: limpiar los paneles (da energía) o dar mantenimiento al soporte vital (cuida a la tripulación). La que no eliges se queda sin hacer.
+3. **Resultado.** Se resuelve si llegó una tormenta de partículas, los paneles cargan energía y pasas al siguiente sol.
+
+Ganas si completas **5 experimentos** en los 8 soles con la tripulación viva. Pierdes si la tripulación se queda sin corazones, o si llegas al final sin la ciencia.
+
+## Datos de la NASA
+
+- **Qué usamos:** fulguraciones solares (FLR), eyecciones de masa coronal (CMEAnalysis), tormentas geomagnéticas (GST) y tormentas de partículas (SEP) del **3 al 10 de octubre de 2026**, tomadas de [NASA DONKI](https://ccmc.gsfc.nasa.gov/tools/DONKI/) el 14 de noviembre de 2026. Están en `src/data/spaceWeather.ts`, con el enlace de cada evento.
+- **Para qué:** cada sol del juego es uno de esos días. La clase real de la fulguración decide qué tan arriesgado es no activar el blindaje.
+- **Son datos guardados, no en vivo.** El juego lo dice en pantalla.
+- **Qué NO es dato de la NASA:** las probabilidades de tormenta, los costos de energía y los corazones son diseño del juego (`src/game/rules.ts`). En esa semana real DONKI no registró ninguna tormenta de partículas; el juego lo cuenta en la pantalla final.
+
+## Balance
+
+`npm run balance` juega 20,000 partidas automáticas por estrategia. La meta es que ni «protegerse siempre» ni «nunca protegerse» ganen seguido, y que decidir con criterio sí.
+
+## Estructura
+
+- `src/components` — vistas (Preparación, Rutina, Resultado, Final) y piezas compartidas.
+- `src/data` — clima espacial, textos de las misiones, fichas y experimentos.
+- `src/game` — reglas (`rules.ts`), fases de la misión (`missionState.ts`) y la lógica de cada minijuego.
+- `src/store` — estado con Zustand (la partida se guarda en el navegador).
+- `src/styles` — estilos.
+- `scripts/balance.ts` — simulador de balance.
 
 `npm run lint` revisa el código y `npm run build` compila la aplicación.

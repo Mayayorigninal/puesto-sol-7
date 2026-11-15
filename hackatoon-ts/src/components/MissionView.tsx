@@ -1,73 +1,73 @@
-import { LeakGame } from '../game/leaks/LeakGame'
-import { PatchGame } from '../game/patches/PatchGame'
 import type { Dispatch } from 'react'
+import { missions } from '../data/missions'
 import { DustGame } from '../game/dust/DustGame'
 import { FilterGame } from '../game/filter/FilterGame'
-import { systemLabels, type missionReducer } from '../game/missionState'
-import { missionOptions, missions } from '../data/missions'
-import { Icon } from './Icon'
+import { LeakGame } from '../game/leaks/LeakGame'
+import type { GameAction, GameState } from '../game/missionState'
+import { PatchGame } from '../game/patches/PatchGame'
+import { ExperimentAnim } from './ExperimentAnim'
+import { Intro } from './Intro'
+import { MissionEnd } from './MissionEnd'
+import { PrepView } from './PrepView'
+import { RoutineView } from './RoutineView'
+import { SolResult } from './SolResult'
 
 type MissionViewProps = {
-  phase: ReturnType<typeof missionReducer>['phase']
-  dispatch: Dispatch<Parameters<typeof missionReducer>[1]>
+  game: GameState
+  dispatch: Dispatch<GameAction>
 }
 
-export function MissionView({ phase, dispatch }: MissionViewProps) {
-  if (phase.type === 'decision') {
-    return (
-      <div className="carta">
-        <Icon name="i-bip" className="grande" />
-        <div className="quien">BIP · protocolo de mantenimiento</div>
-        <h2 className="dice">Capitán, hay varios pendientes y la tripulación solo alcanza para uno hoy. El reglamento dice que elige usted.</h2>
-        <div className="ops">
-          {missionOptions.map((mission) => (
-            <button key={mission} className="op" type="button" onClick={() => dispatch({ type: 'choose', mission })}>
-              {missions[mission].option}<small>{missions[mission].detail}</small>
-            </button>
-          ))}
+/** Muestra la pantalla que corresponde a la fase actual de la misión. */
+export function MissionView({ game, dispatch }: MissionViewProps) {
+  const { phase, sol, resources } = game
+
+  switch (phase.type) {
+    case 'intro':
+      return <Intro onBegin={() => dispatch({ type: 'begin' })} />
+
+    case 'prep':
+      // La key hace que cada sol empiece con las opciones sin marcar.
+      return <PrepView key={sol} sol={sol} resources={resources} onConfirm={(plan) => dispatch({ type: 'confirmPlan', plan })} />
+
+    case 'experiment':
+      return <ExperimentAnim science={resources.science} onDone={() => dispatch({ type: 'experimentDone' })} />
+
+    case 'routine':
+      return <RoutineView sol={sol} resources={resources} onChoose={(mission) => dispatch({ type: 'choose', mission })} />
+
+    case 'instructions': {
+      const mission = missions[phase.mission]
+      return (
+        <div className="carta carta-centrada">
+          <h2 className="dice" style={{ fontSize: '1.5rem' }}>{mission.title}</h2>
+          <p className="lead">{mission.instructions}</p>
+          <button className="btn" type="button" onClick={() => dispatch({ type: 'start' })}>¡Ya!</button>
+          <button className="btn sec" type="button" onClick={() => dispatch({ type: 'back' })}>Elegir la otra tarea</button>
         </div>
-      </div>
-    )
-  }
+      )
+    }
 
-  const mission = missions[phase.mission]
-  if (phase.type === 'instructions') {
-    return (
-      <div className="carta carta-centrada">
-        <h2 className="dice" style={{ fontSize: '1.5rem' }}>{mission.title}</h2>
-        <p className="lead">{mission.instructions}</p>
-        <button className="btn" type="button" onClick={() => dispatch({ type: 'start' })}>¡Ya!</button>
-      </div>
-    )
-  }
+    case 'playing': {
+      // El dado de la tormenta se tira aquí y viaja en la acción,
+      // para que el reducer siga siendo una función pura.
+      const onFinish = (success: boolean, value: number) =>
+        dispatch({ type: 'finish', success, value, roll: Math.random() })
+      if (phase.mission === 'fugas') return <LeakGame onFinish={onFinish} />
+      if (phase.mission === 'parches') return <PatchGame onFinish={onFinish} />
+      return phase.mission === 'polvo'
+        ? <DustGame onFinish={onFinish} onSand={() => dispatch({ type: 'discover', milestone: 'arena' })} />
+        : <FilterGame onFinish={onFinish} />
+    }
 
-  if (phase.type === 'playing') {
-    const onFinish = (success: boolean, value: number) => dispatch({ type: 'finish', success, value })
-    if (phase.mission === 'fugas') return <LeakGame onFinish={onFinish} />
-    if (phase.mission === 'parches') return <PatchGame onFinish={onFinish} />
-    return phase.mission === 'polvo'
-      ? <DustGame onFinish={onFinish} onSand={() => dispatch({ type: 'discover', milestone: 'arena' })} />
-      : <FilterGame onFinish={onFinish} />
-  }
+    case 'solResult':
+      return (
+        <SolResult
+          sol={sol} mission={phase.mission} value={phase.value} report={phase.report}
+          resources={resources} last={phase.ending !== null} onNext={() => dispatch({ type: 'nextSol' })}
+        />
+      )
 
-  const { success, value, effects } = phase
-  const other = missionOptions[(missionOptions.indexOf(phase.mission) + 1) % missionOptions.length]
-  return (
-    <div className="carta carta-centrada">
-      <h2 className="dice" style={{ fontSize: '1.45rem', color: success ? 'var(--life)' : 'var(--alert)' }}>
-        {success ? mission.success : mission.failure}
-      </h2>
-      <p className="lead">{success ? mission.successText : mission.failureText(value)}</p>
-      <div className="efectos">
-        {effects.map(({ system, amount }) => (
-          <span key={system} className={`chip ${amount > 0 ? 'mas' : 'menos'}`}>
-            {systemLabels[system]} {amount > 0 ? '+' : ''}{amount}
-          </span>
-        ))}
-      </div>
-      <div className="real"><b>{phase.mission === 'fugas' ? 'Bitácora de BIP' : 'Pasó de verdad'}</b>{mission.fact}</div>
-      <button className="btn" type="button" onClick={() => dispatch({ type: 'retry', mission: other })}>Probar otra decisión</button>
-      <button className="btn sec" type="button" onClick={() => dispatch({ type: 'retry', mission: phase.mission })}>Repetir este minijuego</button>
-    </div>
-  )
+    case 'end':
+      return <MissionEnd ending={phase.ending} resources={resources} history={game.history} onRestart={() => dispatch({ type: 'restart' })} />
+  }
 }

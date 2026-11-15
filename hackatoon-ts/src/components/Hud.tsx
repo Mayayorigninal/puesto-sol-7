@@ -1,30 +1,35 @@
-import { calendar } from '../data/almanac'
+import { spaceWeather } from '../data/spaceWeather.ts'
+import { rules, type Resources } from '../game/rules.ts'
 import { Icon, type IconName } from './Icon'
+import { ResourceBar } from './ResourceBar'
 
 const tabs = [
-  { id: 'estado', label: 'Estado', icon: 'i-persona' },
-  { id: 'hitos', label: 'Hitos', icon: 'i-medal' },
   { id: 'mision', label: 'Misión', icon: 'i-base' },
+  { id: 'hitos', label: 'Hitos', icon: 'i-medal' },
 ] as const satisfies ReadonlyArray<{ id: string; label: string; icon: IconName }>
 
 export type Tab = (typeof tabs)[number]['id']
 
-export function Hud({ energy, completed }: { energy: number; completed: boolean }) {
-  const { sol, fecha } = calendar[0]
-  const progress = completed ? sol / calendar.length * 100 : 0
+type HudProps = {
+  sol: number
+  /** Soles ya terminados (para la barra de progreso). */
+  completed: number
+  resources: Resources
+}
+
+export function Hud({ sol, completed, resources }: HudProps) {
+  const { fecha } = spaceWeather[sol - 1]
+  const progress = completed / rules.sols * 100
 
   return (
     <header className="top">
       <div className="barra">
-        <div className="et">SOL <b>{sol}</b> DE {calendar.length} · {fecha} · Sol tranquilo</div>
-        <div className="pista" role="progressbar" aria-label="Progreso de la misión" aria-valuenow={progress}>
+        <div className="et">SOL <b>{sol}</b> DE {rules.sols} · {fecha}</div>
+        <div className="pista" role="progressbar" aria-label="Progreso de la misión" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
           <i style={{ width: `${progress}%` }} />
         </div>
       </div>
-      <div className="energia" aria-label={`Energía: ${energy}`}>
-        <Icon name="i-bolt" className="bolt" />
-        <span className="n">{energy}</span>
-      </div>
+      <ResourceBar resources={resources} />
     </header>
   )
 }

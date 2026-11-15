@@ -1,4 +1,5 @@
 import { milestones, type Milestone } from '../data/almanac'
+import { donkiCredit, donkiUrl } from '../data/spaceWeather.ts'
 import { Icon } from './Icon'
 
 export function Almanac({ discoveries }: { discoveries: ReadonlySet<Milestone> }) {
@@ -24,6 +25,7 @@ export function Almanac({ discoveries }: { discoveries: ReadonlySet<Milestone> }
           )
         })}
       </div>
+      <a className="clima-fuente" href={donkiUrl} target="_blank" rel="noreferrer">{donkiCredit} ↗</a>
     </div>
   )
 }

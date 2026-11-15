@@ -1,20 +1,19 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { initialGame, missionReducer } from '../game/missionState'
+import type { Milestone } from '../data/almanac'
+import { initialGame, missionReducer, type GameAction, type GameState } from '../game/missionState'
 
-type GameState = ReturnType<typeof missionReducer>
-type GameAction = Parameters<typeof missionReducer>[1]
 type GameStore = {
   game: GameState
   dispatch: (action: GameAction) => void
 }
 
-type SavedGame = Omit<GameState, 'discoveries'> & {
-  discoveries: Array<GameState['discoveries'] extends ReadonlySet<infer T> ? T : never>
-}
+// localStorage guarda texto (JSON) y un Set no se puede convertir a JSON,
+// así que las fichas descubiertas se guardan como arreglo.
+type SavedGame = Omit<GameState, 'discoveries'> & { discoveries: Milestone[] }
 
 export const useGameStore = create<GameStore>()(
-  persist<GameStore, [], [], SavedGame>(
+  persist<GameStore, [], [], SavedGame | null>(
     (set) => ({
       game: initialGame,
       dispatch: (action) => set((state) => ({
@@ -23,19 +22,22 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'puesto-sol-7',
-      version: 1,
+      // Versión 2: la misión ahora dura 8 soles y los recursos se acumulan.
+      version: 2,
       storage: createJSONStorage(() => localStorage),
+      // Las partidas guardadas con la versión 1 ya no son compatibles: se descartan.
+      migrate: () => null,
       partialize: ({ game }) => ({
         ...game,
-        // A timed challenge starts again from its instructions after a reload.
+        // Un minijuego con tiempo vuelve a empezar desde sus instrucciones al recargar.
         phase: game.phase.type === 'playing'
           ? { type: 'instructions', mission: game.phase.mission }
           : game.phase,
         discoveries: [...game.discoveries],
       }),
       merge: (persisted, current) => {
-        if (!persisted) return current
-        const saved = persisted as SavedGame
+        const saved = persisted as SavedGame | null | undefined
+        if (!saved) return current
         return {
           ...current,
           game: { ...saved, discoveries: new Set(saved.discoveries) },

@@ -1,15 +1,6 @@
-export const calendar = [
-    { sol: 1, fecha: "3 oct 2026",  clase: "tranquilo",   flr: null },
-    { sol: 2, fecha: "4 oct 2026",  clase: "tranquilo",   flr: "B9.3" },
-    { sol: 3, fecha: "5 oct 2026",  clase: "fulguracion", flr: "M1.0" },
-    { sol: 4, fecha: "6 oct 2026",  clase: "fulguracion", flr: "M1.8" },
-    { sol: 5, fecha: "7 oct 2026",  clase: "tranquilo",   flr: "C7.9" },
-    { sol: 6, fecha: "8 oct 2026",  clase: "tormenta",    flr: "M6.7" },
-    { sol: 7, fecha: "9 oct 2026",  clase: "fulguracion", flr: "M1.3" },
-    { sol: 8, fecha: "10 oct 2026", clase: "tormenta",    flr: "M6.4" }
-  ] as const
-
 export const milestones = [
+    { id: "fulguracion", title: "Fulguración solar", description: "Un destello gigante de luz y rayos X en el Sol. Tarda unos 8 minutos en llegar. Se clasifican con letras: B, C, M y X. Cada letra es unas 10 veces más fuerte que la anterior.", source: "NASA DONKI — catálogo de fulguraciones (FLR)" },
+    { id: "particulas", title: "Tormenta de partículas", description: "A veces, después de una fulguración fuerte, el Sol lanza partículas rapidísimas que sí pueden dañar a un astronauta. Nadie sabe con certeza si van a llegar, por eso ante una alerta la tripulación se refugia donde hay más blindaje.", source: "NASA — radiación espacial y partículas solares (SEP)" },
     { id: "fuga", title: "¡Tenemos una fuga!", description: "El casco de la cabina perdió su sello. Cada agujero abierto reduce el oxígeno disponible en el minijuego.", source: "Bitácora del Puesto Sol 7" },
     { id: "parche", title: "Reparación de emergencia", description: "Mantener presionado un parche permite fijarlo. Si lo sueltas antes de tiempo, la fuga vuelve a abrirse.", source: "Manual de BIP · simulación" },
     { id: "micrometeorito", title: "Micrometeoritos", description: "Granitos de roca o metal, a veces más chicos que un grano de arena, que viajan a decenas de kilómetros por segundo. A esa velocidad pueden perforar el casco, por eso las naves llevan blindaje en capas.", source: "NASA — micrometeoroides y basura espacial" },

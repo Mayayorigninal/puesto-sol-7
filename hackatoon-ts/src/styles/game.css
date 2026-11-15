@@ -156,7 +156,7 @@ p { margin: 0; }
 .sellar span { position: relative; }
 
 nav {
-  flex: none; display: grid; grid-template-columns: repeat(3, 1fr);
+  flex: none; display: grid; grid-template-columns: repeat(2, 1fr);
   border-top: 1px solid var(--line); background: var(--panel);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -349,3 +349,113 @@ nav button:focus-visible { outline: 2px solid var(--sun); outline-offset: -3px; 
   /* Que el casco quepa completo en pantallas bajas de laptop sin tener que hacer scroll. */
   .patch-game { max-width: clamp(360px, calc((100dvh - 400px) * 1.35), 720px); }
 }
+
+/* ---- recursos (arriba, siempre visibles) ---- */
+.recursos { display: flex; align-items: center; gap: 10px; flex: none; }
+.recurso { display: flex; align-items: center; gap: 3px; }
+.recurso svg { width: 15px; height: 15px; }
+.recurso .n { font-family: var(--display); font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.recurso .n small { font-size: .7em; opacity: .7; }
+.rec-energia { color: var(--sun); }
+.rec-ciencia { color: var(--shield); }
+.rec-trip { gap: 1px; color: var(--alert); }
+.rec-trip svg { width: 13px; height: 13px; }
+.rec-trip .vacio { color: var(--panel-2); }
+.rec-trip.bajo { animation: latido 1s infinite; }
+@keyframes latido { 50% { transform: scale(1.12); } }
+
+/* ---- preparación ---- */
+.prep { gap: 14px; }
+.clima { border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 12px; background: var(--panel-2); padding: 12px 13px; display: flex; flex-direction: column; gap: 9px; }
+.clima-cab { display: flex; align-items: center; gap: 10px; }
+.clima-cab > svg { width: 30px; height: 30px; flex: none; color: var(--sun); }
+.clima-cab > div { flex: 1; min-width: 0; }
+.clima-clase { font-family: var(--display); font-weight: 700; font-size: 1.2rem; }
+.clima-riesgo { font-family: var(--data); font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 20px; padding: 4px 9px; white-space: nowrap; color: var(--muted); }
+.clima-datos { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; font-size: .82rem; line-height: 1.45; color: var(--muted); }
+.clima-datos b { color: var(--ink); }
+.clima-aviso { color: var(--ink); }
+.clima-fuente { font-family: var(--data); font-size: .58rem; line-height: 1.5; color: var(--shield); text-decoration: none; }
+.clima-fuente:hover { text-decoration: underline; }
+.clima-ninguno { border-left-color: var(--life); } .clima-ninguno .clima-riesgo { color: var(--life); }
+.clima-bajo { border-left-color: var(--crop); } .clima-bajo .clima-riesgo { color: var(--crop); }
+.clima-medio { border-left-color: var(--sun); } .clima-medio .clima-riesgo { color: var(--sun); }
+.clima-alto, .clima-extremo { border-left-color: var(--alert); }
+.clima-alto .clima-riesgo, .clima-extremo .clima-riesgo { color: var(--alert); }
+.clima-alto .clima-cab > svg, .clima-extremo .clima-cab > svg { color: var(--alert); animation: latido .8s infinite; }
+
+.prep-ops { display: flex; flex-direction: column; gap: 8px; }
+.prep-op {
+  display: flex; align-items: center; gap: 11px; text-align: left; cursor: pointer;
+  border: 2px solid var(--line); background: var(--panel-2); color: var(--ink);
+  border-radius: 12px; padding: 11px 12px; font-family: var(--body); font-weight: 700; font-size: .92rem;
+}
+.prep-op > svg { width: 28px; height: 28px; flex: none; color: var(--muted); }
+.prep-txt { flex: 1; min-width: 0; }
+.prep-txt small { display: block; font-weight: 400; font-size: .78rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.prep-costo { display: flex; align-items: center; gap: 2px; font-family: var(--display); font-size: 1.05rem; color: var(--sun); flex: none; }
+.prep-costo svg { width: 14px; height: 14px; }
+.prep-op:disabled { opacity: .45; cursor: default; }
+.prep-op:focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
+.prep-blindaje[aria-pressed="true"] { border-color: var(--life); background: #173a36; }
+.prep-blindaje[aria-pressed="true"] > svg { color: var(--life); }
+.prep-ciencia[aria-pressed="true"] { border-color: var(--shield); background: #1c2f55; }
+.prep-ciencia[aria-pressed="true"] > svg { color: var(--shield); }
+.prep-saldo { text-align: center; font-size: .86rem; color: var(--muted); }
+.prep-saldo b { color: var(--sun); font-family: var(--display); font-size: 1.05rem; white-space: nowrap; }
+.prep-saldo b svg { width: 13px; height: 13px; vertical-align: -1px; }
+
+/* ---- rutina, resultado y final ---- */
+.op small + small { margin-top: 5px; }
+.op-aviso { color: var(--alert) !important; font-weight: 700 !important; }
+.noche { background: var(--panel-2); border-left: 3px solid var(--life); border-radius: 0 10px 10px 0; padding: 11px 13px; font-size: .84rem; line-height: 1.5; text-align: left; }
+.noche b { color: var(--life); font-family: var(--data); font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+.noche-mal { border-left-color: var(--alert); }
+.noche-mal b { color: var(--alert); }
+.reglas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; text-align: left; font-size: .9rem; line-height: 1.4; }
+.reglas li { display: flex; align-items: center; gap: 10px; }
+.reglas svg { width: 22px; height: 22px; flex: none; }
+.on-ciencia { color: var(--shield); } .on-trip { color: var(--alert); } .on-energia { color: var(--sun); } .on-blindaje { color: var(--life); }
+.credito { font-family: var(--data); font-size: .56rem; line-height: 1.5; color: var(--muted); }
+.final .remo { align-self: center; width: 110px; height: 124px; }
+.bitacora { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.bitacora li { display: grid; grid-template-columns: 3.4em 3em auto 1fr; align-items: center; gap: 8px; background: var(--panel-2); border-radius: 8px; padding: 6px 10px; font-size: .78rem; }
+.bitacora li.mal { outline: 1px solid var(--alert); }
+.bit-sol { font-family: var(--data); font-size: .62rem; color: var(--muted); text-transform: uppercase; }
+.bit-clase { font-family: var(--display); font-weight: 700; }
+.bit-iconos { display: flex; gap: 4px; }
+.bit-iconos svg { width: 15px; height: 15px; color: var(--line); }
+.bit-iconos svg.on-blindaje { color: var(--life); } .bit-iconos svg.on-ciencia { color: var(--shield); }
+.bit-nota { color: var(--muted); text-align: right; }
+.fuente-inline { color: var(--muted); font-size: .9em; }
+
+/* ---- experimento ---- */
+.frasco { width: 110px; height: 128px; align-self: center; }
+.frasco-vidrio { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.frasco-liquido { fill: var(--shield); transform-origin: 50% 100%; transform-box: fill-box; animation: llenar 1.1s ease-out both; }
+.burbuja { fill: #cfe3ff; opacity: 0; animation: burbujear 1.3s ease-in infinite; }
+.b2 { animation-delay: .4s; } .b3 { animation-delay: .8s; }
+@keyframes llenar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes burbujear { 0% { opacity: 0; transform: translateY(0) scale(.6); } 30% { opacity: .95; } 100% { opacity: 0; transform: translateY(-64px) scale(1.1); } }
+@media (prefers-reduced-motion: reduce) {
+  .frasco-liquido, .rec-trip.bajo, .clima-cab > svg { animation: none !important; }
+  .burbuja { animation: none; opacity: .8; }
+}
+
+@media (min-width: 768px) {
+  .recursos { gap: 22px; }
+  .recurso svg { width: 22px; height: 22px; }
+  .rec-trip svg { width: 19px; height: 19px; }
+  .recurso .n { font-size: 1.55rem; }
+  .prep { gap: 18px; }
+  .clima { padding: 18px 20px; }
+  .clima-clase { font-size: 1.5rem; }
+  .clima-datos { font-size: .95rem; }
+  .clima-riesgo, .clima-fuente { font-size: .68rem; }
+  .prep-ops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .prep-op { padding: 18px 16px; font-size: 1.05rem; }
+  .prep-txt small { font-size: .88rem; }
+  .noche, .reglas { font-size: .95rem; }
+  .bitacora li { font-size: .9rem; padding: 9px 14px; }
+}
+@media (min-width: 768px) and (max-width: 1023px) { .prep-ops { grid-template-columns: 1fr; } }
