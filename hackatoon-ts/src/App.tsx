@@ -3,17 +3,33 @@ import { useEffect, useRef, useState } from 'react'
 import { Almanac } from './components/Almanac'
 import { Hud, Navigation, type Tab } from './components/Hud'
 import { MissionView } from './components/MissionView'
+import type { Mission } from './data/missions'
 import { useAudioStore } from './store/useAudioStore'
 import { useGameStore } from './store/useGameStore'
+
+const industrialTrack = 'Ambient-Sound-2.wav'
+const panelAndFilterTrack = 'Ambient-Sound-3.wav'
+const minigameTracks: Record<Mission, string> = {
+  ejercicio: 'Musica-1-bg.ogg',
+  parches: 'Musica-1-bg.ogg',
+  fugas: 'Musica-1-bg.ogg',
+  cosecha: industrialTrack,
+  antena: industrialTrack,
+  polvo: panelAndFilterTrack,
+  filtro: panelAndFilterTrack,
+}
 
 export default function App() {
   const { t, rich, language } = useTranslation()
   const [active, setActive] = useState<Tab>('mision')
   const game = useGameStore((state) => state.game)
   const dispatch = useGameStore((state) => state.dispatch)
-  const musicRef = useRef<HTMLAudioElement>(null)
+  const ambientMusicRef = useRef<HTMLAudioElement>(null)
+  const minigameMusicRef = useRef<HTMLAudioElement>(null)
   const musicVolume = useAudioStore((state) => state.musicVolume)
-  const isPlayingMinigame = game.phase.type === 'playing'
+  const { phase } = game
+  const isPlayingMinigame = phase.type === 'playing'
+  const minigameTrack = isPlayingMinigame ? minigameTracks[phase.mission] : undefined
 
   useEffect(() => {
     document.documentElement.lang = language
@@ -21,16 +37,18 @@ export default function App() {
   }, [language, t])
 
   useEffect(() => {
-    const music = musicRef.current
-    if (!music) return
-
-    music.volume = musicVolume / 100
-    music.muted = musicVolume === 0
-  }, [musicVolume])
+    for (const music of [ambientMusicRef.current, minigameMusicRef.current]) {
+      if (!music) continue
+      music.volume = musicVolume / 100
+      music.muted = musicVolume === 0
+    }
+  }, [musicVolume, minigameTrack])
 
   useEffect(() => {
-    const music = musicRef.current
-    if (!music || isPlayingMinigame) return
+    const music = isPlayingMinigame
+      ? minigameMusicRef.current
+      : ambientMusicRef.current
+    if (!music) return
 
     const playMusic = () => {
       if (music.paused) void music.play().catch(() => {})
@@ -44,11 +62,12 @@ export default function App() {
       document.removeEventListener('click', playMusic)
       music.pause()
     }
-  }, [isPlayingMinigame])
+  }, [isPlayingMinigame, minigameTrack])
 
   return (
     <div id="app">
-      <audio ref={musicRef} src={`${import.meta.env.BASE_URL}music/727090__joshkeylowf__back-from-space.wav`} loop />
+      <audio ref={ambientMusicRef} src={`${import.meta.env.BASE_URL}music/Ambient-Sound.wav`} loop />
+      {minigameTrack && <audio key={minigameTrack} ref={minigameMusicRef} src={`${import.meta.env.BASE_URL}music/${minigameTrack}`} loop />}
       <div className="station-brand">{rich('APP.Brand', { station: t('APP.Station'), sol: <span>Sol 7</span> })}</div>
       <Hud sol={game.sol} completed={game.history.length} resources={game.resources} />
       <section className="view pad" id="view-hitos" role="tabpanel" aria-labelledby="tab-hitos" hidden={active !== 'hitos'}>

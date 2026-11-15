@@ -27,9 +27,7 @@ export const useGameStore = create<GameStore>()(
         const { effectsVolume } = useAudioStore.getState()
         if (effectsVolume === 0) return
 
-        const filename = action.success
-          ? '654321__gronkjaer__correctch_new.mp3'
-          : '131657__bertrof__game-sound-wrong.wav'
+        const filename = action.success ? 'correct-sound.mp3' : 'wrong-sound.wav'
         const sound = new Audio(`${import.meta.env.BASE_URL}sound/${filename}`)
         sound.volume = effectsVolume / 100
         void sound.play().catch(() => {
