@@ -560,3 +560,4 @@ p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
 .astro-mal image { filter: grayscale(1) brightness(.8); }
 .astro-mal .astro-flota { transform: rotate(-80deg) translate(-8px, 2px); }
 .base .celda-vacia { filter: grayscale(1) brightness(1.4); opacity: .3; }
+.base .panel-muy-sucio { filter: brightness(.6) sepia(.5); }

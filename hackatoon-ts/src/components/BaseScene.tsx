@@ -96,17 +96,13 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
       <path d="M0 96q40 -7 90 -2t100 -1t90 1t80 -2v9q-40 4 -80 2t-90 0t-100 1t-90 2Z" fill="#9AA3B8" />
       <g fill="#474F66"><ellipse cx="30" cy="268" rx="26" ry="5" /><ellipse cx="180" cy="187" rx="5" ry="2" /><ellipse cx="350" cy="186" rx="8" ry="3" /><ellipse cx="8" cy="150" rx="6" ry="9" /></g>
 
-      {/* paneles solares */}
+      {/* paneles solares (dibujos de Joseph): limpios, con polvo, o muy sucios (más oscuros) */}
       {[26, 62, 98].map((x) => (
-        <g key={x} transform={`translate(${x} 92)`}>
-          <path d="M0 0v-12" stroke="#C9D1E0" strokeWidth="3" strokeLinecap="round" />
-          <g transform="rotate(-18 0 -14)">
-            <rect x="-15" y="-21" width="30" height="13" rx="3" fill={dustLevel === 0 ? '#5B9BF5' : dustLevel === 1 ? '#6F86A8' : '#8B7E6A'} stroke="#DCE4F2" strokeWidth="1.500" />
-            <path d="M-5 -21v13M5 -21v13" stroke="#DCE4F2" strokeWidth="1" opacity=".7" />
-            {dustLevel > 0 && <g fill="#C4A478">{[[-10, -17], [-1, -12], [8, -18], [10, -11], [-6, -11]].slice(0, dustLevel === 1 ? 3 : 5).map(([cx, cy]) => <circle key={cx} cx={cx} cy={cy} r="2.200" />)}</g>}
-            {dustLevel === 0 && <path className="panel-brillo" d="M-11 -18l5 0" stroke="#fff" strokeWidth="2" strokeLinecap="round" />}
-          </g>
-        </g>
+        <image
+          key={x} href={`${import.meta.env.BASE_URL}assets/${dustLevel === 0 ? 'panel-limpio' : 'panel-sucio'}.png`}
+          x={x - 17} y="68" width="34" height="28"
+          className={dustLevel >= 2 ? 'panel-muy-sucio' : undefined}
+        />
       ))}
 
       {/* entrada y aparatos científicos */}
@@ -147,8 +143,7 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
 
       {/* soporte vital: la luz avisa cuánto lleva sin mantenimiento */}
       <g transform="translate(54 236)">
-        <rect x="-12" y="-18" width="24" height="36" rx="10" fill="#D8DEE9" /><rect x="-5" y="-23" width="10" height="6" rx="2" fill="#9AA3B8" />
-        <text y="4" textAnchor="middle" fontFamily="var(--display)" fontSize="10" fontWeight="700" fill="#27314A">O₂</text>
+        <image href={`${import.meta.env.BASE_URL}assets/tanque-o2.png`} x="-14" y="-24" width="28" height="37" />
         <circle className={wear >= rules.wearLimit ? 'luz-alerta' : ''} cx="24" cy="-12" r="5" fill={wearColor} />
       </g>
 
