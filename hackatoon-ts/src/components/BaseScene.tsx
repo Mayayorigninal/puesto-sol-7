@@ -21,17 +21,12 @@ const posts = [[236, 163], [300, 163], [136, 163], [128, 241], [226, 241]] as co
 const shelter = [[212, 241], [240, 241], [268, 241], [296, 241], [324, 241]] as const
 
 function Astronaut({ index, x, y, hurt }: { index: number; x: number; y: number; hurt: boolean }) {
+  // Dibujo de Joseph (public/assets/astronauta.png). Mide 19 × 34 unidades y se apoya en el piso del cuarto.
   return (
     <g className={`astro${hurt ? ' astro-mal' : ''}`} style={{ transform: `translate(${x}px, ${y}px)` }}>
       <g className="astro-flota" style={{ animationDelay: `${index * -0.7}s` }}>
-        <rect x="-8" y="2" width="16" height="15" rx="6" fill="#EFF3F8" />
-        <rect x="-4.500" y="7" width="9" height="5" rx="2" fill={suitColors[index]} />
-        <circle cy="-5" r="10" fill="#EFF3F8" />
-        <circle cy="-5" r="7.200" fill="#27314A" />
-        {hurt
-          ? <path d="M-4.500 -7l3 3m0 -3l-3 3M1.500 -7l3 3m0 -3l-3 3" stroke="#EFF3F8" strokeWidth="1.300" strokeLinecap="round" />
-          : <g fill="#EFF3F8"><circle cx="-3" cy="-5.500" r="1.500" /><circle cx="3" cy="-5.500" r="1.500" /></g>}
-        <path d={hurt ? 'M-3 -1q3 -2.500 6 0' : 'M-3 -2q3 2.500 6 0'} stroke="#EFF3F8" strokeWidth="1.300" fill="none" strokeLinecap="round" />
+        <image href={`${import.meta.env.BASE_URL}assets/astronauta.png`} x="-9.500" y="-24" width="19" height="34" />
+        <rect x="-3.300" y="0.300" width="4.500" height="3.200" rx=".8" fill={suitColors[index]} />
       </g>
     </g>
   )
