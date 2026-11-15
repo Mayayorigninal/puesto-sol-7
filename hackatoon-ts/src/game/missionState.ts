@@ -2,28 +2,37 @@ import type { Milestone } from '../data/almanac'
 import { missions, type Mission } from '../data/missions'
 import { spaceWeather } from '../data/spaceWeather.ts'
 import {
-  applyPlan, canAfford, initialResources, missionEnding, resolveSol,
+  applyPlan, canAfford, initialResources, missionEnding, resolveSol, routineKinds,
   type Ending, type Plan, type Resources, type SolReport, type TaskKind,
 } from './rules.ts'
 
-/** Qué tipo de tarea es cada minijuego: da energía o cuida el soporte vital. */
+/** A qué sistema de la base pertenece cada minijuego. */
 export const taskKinds: Record<Mission, TaskKind> = {
   polvo: 'energia',
   filtro: 'soporte',
   fugas: 'soporte',
   parches: 'soporte',
   ejercicio: 'soporte',
-  // Provisional: cuando exista la despensa, la cosecha llenará la comida.
-  cosecha: 'soporte',
-  // Provisional: cuando exista el pronóstico oculto, la antena decidirá si mañana se ve el clima.
-  antena: 'soporte',
+  cosecha: 'comida',
+  antena: 'comms',
 }
 
-/** Tarea de soporte vital y salud que toca cada sol (la otra opción siempre son los paneles). */
-const supportRotation = ['filtro', 'ejercicio', 'cosecha', 'antena', 'parches', 'fugas'] as const satisfies readonly Mission[]
+/** Minijuego de soporte vital y salud que toca cada sol (van rotando). */
+const supportRotation = ['filtro', 'ejercicio', 'parches', 'fugas'] as const satisfies readonly Mission[]
 
-export function routineOptions(sol: number): readonly [Mission, Mission] {
-  return ['polvo', supportRotation[(sol - 1) % supportRotation.length]]
+function missionFor(kind: TaskKind, sol: number): Mission {
+  switch (kind) {
+    case 'energia': return 'polvo'
+    case 'comida': return 'cosecha'
+    case 'comms': return 'antena'
+    case 'soporte': return supportRotation[(sol - 1) % supportRotation.length]
+  }
+}
+
+/** Las dos tareas que se ofrecen en la Rutina: las de los dos sistemas más urgentes. */
+export function routineOptions(resources: Resources, sol: number): readonly [Mission, Mission] {
+  const [a, b] = routineKinds(resources, sol)
+  return [missionFor(a, sol), missionFor(b, sol)]
 }
 
 // Cada sol pasa por estas fases, en orden:
@@ -96,7 +105,7 @@ export function missionReducer(state: GameState, action: GameAction): GameState 
       return phase.type === 'experiment' ? { ...state, phase: { type: 'routine' } } : state
 
     case 'choose':
-      if (phase.type !== 'routine' || !routineOptions(state.sol).includes(action.mission)) return state
+      if (phase.type !== 'routine' || !routineOptions(state.resources, state.sol).includes(action.mission)) return state
       return { ...state, phase: { type: 'instructions', mission: action.mission } }
 
     case 'back':

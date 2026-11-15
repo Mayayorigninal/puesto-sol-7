@@ -15,8 +15,8 @@ You command a small outpost on the Moon for 8 days (sols). Every sol shows the *
 Each sol has three steps:
 
 1. **Preparation** — Read the real space-weather report for that day (flare class, plasma cloud speed, NASA alerts). Spend energy on **shielding** (the crew moves to the storm shelter), on an **experiment** (mission progress), on both, or save it.
-2. **Routine** — The crew only has time for one of two tasks. Pick one and play its minigame. The task you skip has a cost: dirty solar panels charge less, and life support left unchecked for two sols hurts the crew.
-3. **Result** — The game rolls whether a particle storm arrives, the panels recharge and the next sol begins.
+2. **Routine** — The outpost has four systems: **energy** (solar panels), **life support & health**, **food** (greenhouse) and **communications** (antenna). Each sol the two most urgent ones ask for help, and the crew only has time for one. Pick one and play its minigame. Whatever you skip gets worse: dusty panels charge less, life support left unchecked for three sols hurts the crew, an empty pantry means hunger, and without the antenna **tomorrow's space-weather forecast never arrives from Earth** — you have to decide blind.
+3. **Result** — The game rolls whether a particle storm arrives, the panels recharge, life support spends 1 energy to produce oxygen, the crew eats, and the next sol begins.
 
 **You win** by completing 5 experiments in 8 sols with the crew alive. **You lose** if the crew runs out of hearts, or if you protect yourself so much that the science never gets done. No choice is free.
 

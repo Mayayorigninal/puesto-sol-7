@@ -1,9 +1,9 @@
 import { rules, type Resources } from '../game/rules.ts'
 import { Icon } from './Icon'
 
-/** Los tres recursos de la misión, siempre visibles arriba. */
+/** Los recursos de la misión, siempre visibles arriba. */
 export function ResourceBar({ resources }: { resources: Resources }) {
-  const { energy, crew, science } = resources
+  const { energy, crew, science, food } = resources
   return (
     <div className="recursos">
       <div className="recurso rec-energia" role="img" aria-label={`Energía: ${energy}`}>
@@ -13,6 +13,9 @@ export function ResourceBar({ resources }: { resources: Resources }) {
         {Array.from({ length: rules.crewMax }, (_, index) => (
           <img key={index} src={`${import.meta.env.BASE_URL}assets/corazon.png`} alt="" className={`corazon${index < crew ? '' : ' vacio'}`} />
         ))}
+      </div>
+      <div className={`recurso rec-comida${food <= 1 ? ' bajo' : ''}`} role="img" aria-label={`Comida: ${food} raciones`}>
+        <img src={`${import.meta.env.BASE_URL}assets/granja/planta-lista.png`} alt="" /><span className="n">{food}</span>
       </div>
       <div className="recurso rec-ciencia" role="img" aria-label={`Ciencia: ${science} de ${rules.scienceGoal} experimentos`}>
         <Icon name="i-flask" /><span className="n">{science}<small>/{rules.scienceGoal}</small></span>

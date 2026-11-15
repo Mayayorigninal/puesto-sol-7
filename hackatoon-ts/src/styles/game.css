@@ -607,3 +607,13 @@ p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
 .antena-boton { touch-action: none; user-select: none; -webkit-user-select: none; }
 @keyframes temblor { 0% { translate: 0 0; } 25% { translate: 3px -2px; } 50% { translate: -3px 2px; } 75% { translate: 2px 2px; } 100% { translate: 0 0; } }
 @media (prefers-reduced-motion: reduce) { .fase-temblor svg { animation: none; } }
+
+/* ---- comida y pronóstico oculto ---- */
+.rec-comida { color: var(--crop); }
+.rec-comida img { width: 18px; height: 12px; image-rendering: pixelated; display: block; }
+.rec-comida.bajo { color: var(--alert); animation: latido 1s infinite; }
+.clima-oculto { border-left-color: var(--muted); }
+.clima-oculto .clima-cab > svg { color: var(--muted); }
+.clima-oculto .clima-riesgo { color: var(--muted); border-style: dashed; }
+@media (max-width: 359px) { .recursos { gap: 6px; } .rec-trip img.corazon { width: 12px; height: 12px; } }
+@media (min-width: 768px) { .rec-comida img { width: 27px; height: 18px; } }

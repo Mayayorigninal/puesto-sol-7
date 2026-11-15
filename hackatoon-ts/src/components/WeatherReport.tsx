@@ -11,7 +11,23 @@ const flareWords: Record<string, string> = {
 }
 
 /** El reporte de clima espacial del día, con los datos reales de NASA DONKI. */
-export function WeatherReport({ weather }: { weather: SolWeather }) {
+export function WeatherReport({ weather, hidden = false }: { weather: SolWeather; hidden?: boolean }) {
+  if (hidden) {
+    return (
+      <section className="clima clima-oculto" aria-label="Sin pronóstico de clima espacial">
+        <div className="clima-cab">
+          <Icon name="i-sun" />
+          <div>
+            <div className="eyebrow">Clima espacial · {weather.fecha}</div>
+            <div className="clima-clase">Sin señal con la Tierra</div>
+            <span className="clima-riesgo">Riesgo desconocido</span>
+          </div>
+        </div>
+        <p className="clima-aviso">La antena lleva días sin revisión y hoy no llegó el pronóstico. Puede haber una fulguración… o no. Tienes que decidir a ciegas.</p>
+      </section>
+    )
+  }
+
   const { flare, flareLink, cmeSpeed, kp, alerts, fecha } = weather
   const risk = stormRisk(flare)
 

@@ -32,8 +32,8 @@ function stormText({ risk, shielded, storm, stormDamage }: SolReport) {
 /** Cierre del sol: cómo salió la tarea, si llegó la tormenta y cuánta energía se cargó. */
 export function SolResult({ sol, mission, value, report, resources, last, onNext }: SolResultProps) {
   const info = missions[mission]
-  const { success, taskEnergy, taskDamage, wearDamage, stormDamage, recharge, risk } = report
-  const hearts = taskDamage + wearDamage + stormDamage
+  const { success, taskEnergy, taskDamage, wearDamage, stormDamage, recharge, risk, oxygenPaid, airDamage, hungerDamage, harvested, forecastLost } = report
+  const hearts = taskDamage + wearDamage + stormDamage + airDamage + hungerDamage
   const energy = taskEnergy + recharge
 
   return (
@@ -56,13 +56,33 @@ export function SolResult({ sol, mission, value, report, resources, last, onNext
       {wearDamage > 0 && (
         <div className="noche noche-mal">
           <b>Soporte vital</b>
-          Van {rules.wearLimit} soles o más sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 corazón.
+          Van {rules.wearLimit} soles sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 corazón.
+        </div>
+      )}
+      {hungerDamage > 0 && (
+        <div className="noche noche-mal">
+          <b>Despensa</b>
+          Se acabó la comida y la tripulación pasó el día con hambre: pierde 1 corazón.
+        </div>
+      )}
+      {airDamage > 0 && (
+        <div className="noche noche-mal">
+          <b>Oxígeno</b>
+          No alcanzó la energía para producir oxígeno: la tripulación pierde 1 corazón.
+        </div>
+      )}
+      {forecastLost && !last && resources.crew > 0 && (
+        <div className="noche noche-mal">
+          <b>Comunicaciones</b>
+          La antena no tiene señal: mañana no llegará el pronóstico del clima espacial desde la Tierra.
         </div>
       )}
 
       <div className="efectos">
-        {energy > 0 && <span className="chip mas">Energía +{energy}</span>}
-        {energy === 0 && <span className="chip menos">Energía +0 · paneles empolvados</span>}
+        <span className="chip mas">Paneles +{energy}</span>
+        {oxygenPaid > 0 && <span className="chip menos">Oxígeno −{oxygenPaid}</span>}
+        {harvested > 0 && <span className="chip mas">Comida +{harvested}</span>}
+        <span className="chip menos">Comida −{rules.foodPerSol}</span>
         {hearts > 0 && <span className="chip menos">Tripulación −{hearts}</span>}
         {hearts === 0 && <span className="chip mas">Tripulación a salvo</span>}
       </div>

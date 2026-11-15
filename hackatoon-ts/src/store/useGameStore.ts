@@ -22,10 +22,10 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: 'puesto-sol-7',
-      // Versión 2: la misión ahora dura 8 soles y los recursos se acumulan.
-      version: 2,
+      // Versión 3: se agregaron la despensa, la antena y el costo del oxígeno.
+      version: 3,
       storage: createJSONStorage(() => localStorage),
-      // Las partidas guardadas con la versión 1 ya no son compatibles: se descartan.
+      // Las partidas guardadas con versiones anteriores ya no son compatibles: se descartan.
       migrate: () => null,
       partialize: ({ game }) => ({
         ...game,
