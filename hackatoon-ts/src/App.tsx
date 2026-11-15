@@ -18,6 +18,8 @@ const minigameTracks: Record<Mission, string> = {
   polvo: panelAndFilterTrack,
   filtro: panelAndFilterTrack,
 }
+// La música suena a la mitad: con el control al 100, el volumen real es 50%.
+const musicGain = 0.5
 
 export default function App() {
   const { t, rich, language } = useTranslation()
@@ -43,6 +45,12 @@ export default function App() {
       music.muted = musicVolume === 0
     }
   }, [musicVolume, minigameTrack])
+    const music = musicRef.current
+    if (!music) return
+
+    music.volume = musicVolume / 100 * musicGain
+    music.muted = musicVolume === 0
+  }, [musicVolume])
 
   useEffect(() => {
     const music = isPlayingMinigame
