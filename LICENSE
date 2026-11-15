@@ -22,26 +22,25 @@ SOFTWARE.
 
 ---
 
-The MIT license above covers the team's original work: source code, texts and
-the original drawings in hackatoon-ts/public/assets/ (heart, astronaut,
-battery, oxygen tank and solar panels).
+The team's original code, text and artwork are available under the MIT license.
+The materials listed below retain their own terms.
 
-Third-party materials (not covered by the MIT license above):
+Third-party materials
 
-- Plant and pot sprites in hackatoon-ts/public/assets/granja/:
-  "FREE Pixel Art Flower Pack" by Karsiori — CC0 1.0 Universal (public domain).
+- The plant and pot sprites in hackatoon-ts/public/assets/granja/ come from
+  "FREE Pixel Art Flower Pack" by Karsiori (CC0 1.0 Universal).
   https://karsiori.itch.io/free-pixel-art-flower-pack
-- Music and sound effects from Freesound (local filenames are listed below).
-- Space weather data: NASA DONKI (Space Weather Database Of Notifications,
-  Knowledge, Information), https://ccmc.gsfc.nasa.gov/tools/DONKI/
-- Fonts (Fredoka, Nunito, IBM Plex Mono) are loaded from Google Fonts under the
-  SIL Open Font License 1.1; they are not included in this repository.
+  https://creativecommons.org/publicdomain/zero/1.0/
+- Space weather data comes from NASA DONKI (Space Weather Database Of
+  Notifications, Knowledge, Information). https://ccmc.gsfc.nasa.gov/tools/DONKI/
+- Fredoka, Nunito and IBM Plex Mono are served by Google Fonts under the SIL
+  Open Font License 1.1. https://openfontlicense.org/open-font-license-official-text/
 - npm dependencies (React, Vite, Zustand, TypeScript, ESLint and others) keep
   their own licenses.
 
 Freesound audio credits
 
-Music in hackatoon-ts/public/music/:
+Music in hackatoon-ts/public/music/
 
 - Ambient-Sound.wav — "Back From Space" by JoshKeyLowF, CC0 1.0 Universal.
   https://freesound.org/people/JoshKeyLowF/sounds/727090/
@@ -61,7 +60,7 @@ Music in hackatoon-ts/public/music/:
   https://freesound.org/people/Louswan/sounds/843183/
   https://creativecommons.org/publicdomain/zero/1.0/
 
-Sound effects in hackatoon-ts/public/sound/:
+Sound effects in hackatoon-ts/public/sound/
 
 - correct-sound.mp3 — "CorrectCh_New.mp3" by Gronkjaer, CC0 1.0 Universal.
   https://freesound.org/people/Gronkjaer/sounds/654321/
@@ -71,7 +70,7 @@ Sound effects in hackatoon-ts/public/sound/:
   https://freesound.org/people/Bertrof/sounds/131657/
   https://creativecommons.org/licenses/by/3.0/
 
-Previously evaluated track (reference only):
+Earlier audio reference
 
 - "Short Track #4971 (Industraumatic)" by looplicator, CC0 1.0 Universal.
   https://freesound.org/people/looplicator/sounds/879833/
