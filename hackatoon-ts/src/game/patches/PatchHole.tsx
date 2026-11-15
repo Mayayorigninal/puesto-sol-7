@@ -1,9 +1,11 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import type { CSSProperties } from 'react'
 import { usePatchStore } from '../../store/usePatchStore'
 import { PatchShape } from './PatchShape'
 
 /** Un agujero del casco con su parche encima. Tocarlo gira el parche 90°. */
 export function PatchHole({ id }: { id: number }) {
+  const { t } = useTranslation()
   // Selector: este componente solo se vuelve a dibujar cuando cambia su propio parche.
   const patch = usePatchStore((state) => state.patches[id])
   const rotate = usePatchStore((state) => state.rotate)
@@ -18,7 +20,7 @@ export function PatchHole({ id }: { id: number }) {
       type="button"
       className={'patch-slot ' + state}
       style={{ '--x': x + '%', '--y': y + '%' } as CSSProperties}
-      aria-label={`Agujero ${id + 1}, ${sealed ? 'sellado' : 'el parche no encaja; toca para girarlo'}`}
+      aria-label={t(sealed ? 'CABIN.SealedHole' : 'PATCH.OpenHole', { number: id + 1 })}
       aria-disabled={sealed}
       onClick={() => rotate(id)}
     >

@@ -1,11 +1,13 @@
+import { useTranslation } from '../i18n/useTranslation'
 import { spaceWeather } from '../data/spaceWeather.ts'
 import { rules, type Resources } from '../game/rules.ts'
 import { Icon, type IconName } from './Icon'
 import { ResourceBar } from './ResourceBar'
+import { VolumeControl } from './VolumeControl'
 
 const tabs = [
-  { id: 'mision', label: 'Misión', icon: 'i-base' },
-  { id: 'hitos', label: 'Hitos', icon: 'i-medal' },
+  { id: 'mision', label: 'NAV.Mission', icon: 'i-base' },
+  { id: 'hitos', label: 'NAV.Milestones', icon: 'i-medal' },
 ] as const satisfies ReadonlyArray<{ id: string; label: string; icon: IconName }>
 
 export type Tab = (typeof tabs)[number]['id']
@@ -18,25 +20,28 @@ type HudProps = {
 }
 
 export function Hud({ sol, completed, resources }: HudProps) {
-  const { fecha } = spaceWeather[sol - 1]
+  const { t, rich, formatDate } = useTranslation()
+  const { date } = spaceWeather[sol - 1]
   const progress = completed / rules.sols * 100
 
   return (
     <header className="top">
       <div className="barra">
-        <div className="et">SOL <b>{sol}</b> DE {rules.sols}<span className="et-fecha"> · {fecha}</span></div>
-        <div className="pista" role="progressbar" aria-label="Progreso de la misión" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
+        <div className="et">{rich('HUD.Sol', { sol: <b>{sol}</b>, total: rules.sols })}<span className="et-fecha"> · {formatDate(date)}</span></div>
+        <div className="pista" role="progressbar" aria-label={t('HUD.Progress')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)}>
           <i style={{ width: `${progress}%` }} />
         </div>
       </div>
       <ResourceBar resources={resources} />
+      <VolumeControl />
     </header>
   )
 }
 
 export function Navigation({ active, onChange }: { active: Tab; onChange: (tab: Tab) => void }) {
+  const { t } = useTranslation()
   return (
-    <nav role="tablist" aria-label="Puesto Sol 7">
+    <nav role="tablist" aria-label={t('APP.Title')}>
       {tabs.map(({ id, label, icon }, index) => (
         <button
           key={id} id={`tab-${id}`} type="button" role="tab" aria-selected={active === id}
@@ -51,7 +56,7 @@ export function Navigation({ active, onChange }: { active: Tab; onChange: (tab: 
             document.getElementById(`tab-${next}`)?.focus()
           }}
         >
-          <Icon name={icon} />{label}
+          <Icon name={icon} />{t(label)}
         </button>
       ))}
     </nav>

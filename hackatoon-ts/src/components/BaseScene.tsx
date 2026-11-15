@@ -1,3 +1,4 @@
+import { useTranslation } from '../i18n/useTranslation'
 import { rules, type Resources, type RiskLevel } from '../game/rules.ts'
 
 export type StormView = 'no' | 'detenida' | 'golpe'
@@ -55,6 +56,7 @@ function Instrument({ index, ghost }: { index: number; ghost: boolean }) {
  * Cada recurso del juego se ve aquí en vez de leerse como un número.
  */
 export function BaseScene({ resources, risk = 'ninguno', shield = false, experimenting = false, storm = 'no' }: BaseSceneProps) {
+  const { t } = useTranslation()
   const { energy, crew, science, dust, wear } = resources
   const flare = flareSize[risk]
   const cells = 6
@@ -63,11 +65,11 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
   const done = experimenting ? science - 1 : science
 
   const label = [
-    `Base lunar. Energía: ${energy}.`,
-    `Tripulación: ${crew} de ${rules.crewMax}${shield ? ', en el refugio' : ''}.`,
-    `Experimentos: ${science} de ${rules.scienceGoal}.`,
-    dust > 0 ? 'Los paneles tienen polvo.' : 'Paneles limpios.',
-    storm === 'golpe' ? 'Una tormenta de partículas alcanzó a la tripulación.' : storm === 'detenida' ? 'El refugio detuvo la tormenta de partículas.' : '',
+    t('BASE.Energy', { energy }),
+    t(shield ? 'BASE.Sheltered' : 'BASE.Crew', { crew, max: rules.crewMax }),
+    t('BASE.Experiments', { science, goal: rules.scienceGoal }),
+    dust > 0 ? t('BASE.Dusty') : t('BASE.Clean'),
+    storm === 'golpe' ? t('BASE.StormHit') : storm === 'detenida' ? t('BASE.StormBlocked') : '',
   ].join(' ')
 
   return (
@@ -118,8 +120,8 @@ export function BaseScene({ resources, risk = 'ninguno', shield = false, experim
         <rect className="cuarto" x="184" y="114" width="160" height="70" rx="12" />
         <rect className="cuarto" x="16" y="192" width="160" height="70" rx="12" />
         <rect className="cuarto cuarto-refugio" x="184" y="192" width="160" height="70" rx="12" />
-        <text x="26" y="127">BATERÍAS</text><text x="194" y="127">LABORATORIO</text>
-        <text x="26" y="205">SOPORTE VITAL</text><text x="194" y="205" className="txt-refugio">REFUGIO</text>
+        <text x="26" y="127">{t('BASE.Batteries')}</text><text x="194" y="127">{t('BASE.Lab')}</text>
+        <text x="26" y="205">{t('BASE.LifeSupport')}</text><text x="194" y="205" className="txt-refugio">{t('BASE.Shelter')}</text>
       </g>
 
       {/* baterías: una por punto de energía (dibujo de Joseph: public/assets/bateria.png) */}

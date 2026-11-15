@@ -1,3 +1,4 @@
+import { useTranslation, type TranslationKey } from '../../i18n/useTranslation'
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
@@ -10,10 +11,11 @@ type DustGameProps = {
 }
 
 export function DustGame({ onSand, onFinish }: DustGameProps) {
+  const { t } = useTranslation()
   const simulation = useRef<Panel | null>(null)
   const [display, setDisplay] = useState({ remaining: duration, cleanliness: 8, windy: false })
   const [sand, setSand] = useState(3)
-  const [note, setNote] = useState('Frota el panel con el dedo.')
+  const [note, setNote] = useState<TranslationKey>('DUST.Scrub')
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
   const activePointer = useRef<number | null>(null)
@@ -59,20 +61,20 @@ export function DustGame({ onSand, onFinish }: DustGameProps) {
     onSand()
     if (panel.windy) {
       panel.waves.push({ position: 0, sweptColumns: 0 })
-      setNote('¡Eso! El viento arrastra la arena y tumba el polvo.')
+      setNote('DUST.SandWind')
     } else {
-      setNote('Sin viento, la arena se quedó ahí tirada.')
+      setNote('DUST.SandStill')
     }
   }
 
   return (
     <div className="mj">
-      <Meter label="Tiempo" text={String(Math.ceil(display.remaining))} value={display.remaining / duration * 100} color="var(--muted)" />
-      <Meter label="Energía del panel" text="meta 80%" value={display.cleanliness} color="var(--sun)" target={target * 100} />
+      <Meter label={t('DUST.Time')} text={String(Math.ceil(display.remaining))} value={display.remaining / duration * 100} color="var(--muted)" />
+      <Meter label={t('DUST.Energy')} text={t('DUST.Target', { percent: target * 100 })} value={display.cleanliness} color="var(--sun)" target={target * 100} />
       <div className="lienzo-caja">
         <canvas
           ref={canvas}
-          aria-label="Panel solar cubierto de polvo"
+          aria-label={t('DUST.Panel')}
           onPointerDown={(event) => {
             if (event.button !== 0 || activePointer.current !== null) return
             activePointer.current = event.pointerId
@@ -86,11 +88,11 @@ export function DustGame({ onSand, onFinish }: DustGameProps) {
             if (activePointer.current === event.pointerId) activePointer.current = null
           }}
         />
-        {display.windy && <div className="viento">¡VIENTO!</div>}
+        {display.windy && <div className="viento">{t('DUST.Wind')}</div>}
       </div>
-      <div className="mj-nota" aria-live="polite">{note}</div>
+      <div className="mj-nota" aria-live="polite">{t(note)}</div>
       <div className="polvo-pie">
-        <button className="btn" type="button" disabled={sand === 0} onClick={addSand}>Echar arena · {sand}</button>
+        <button className="btn" type="button" disabled={sand === 0} onClick={addSand}>{t('DUST.AddSand', { count: sand })}</button>
       </div>
     </div>
   )

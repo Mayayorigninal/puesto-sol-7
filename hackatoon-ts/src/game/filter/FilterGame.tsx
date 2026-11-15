@@ -1,18 +1,22 @@
-import { useRef, useState } from 'react'
+import { useTranslation, type TranslationKey } from '../../i18n/useTranslation'
+import { useMemo, useRef, useState } from 'react'
 import { Icon } from '../../components/Icon'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
 import { Adapter } from './Adapter'
-import { assembly, confusionLevel, createTray, describeStep, shuffle, uses, type Part } from './parts'
+import { assembly, confusionLevel, createTray, describeStep, shuffle, type Part } from './parts'
 
 export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: number) => void }) {
+  const { t } = useTranslation()
   const model = useRef({ step: 0, co2: 28, seal: 0, holding: false, level: 0 })
   const [step, setStep] = useState(0)
   const [co2, setCo2] = useState(28)
   const [seal, setSeal] = useState(0)
-  const [tray, setTray] = useState(createTray)
+  const [order, setOrder] = useState(createTray)
+  const [scrambleLevel, setScrambleLevel] = useState(0)
   const [mistakes, setMistakes] = useState<Part[]>([])
-  const [note, setNote] = useState('Toca la pieza que pide BIP.')
+  const [note, setNote] = useState<TranslationKey>('FILTER.Note.Choose')
+  const tray = useMemo(() => describeStep(step, order, scrambleLevel, t), [step, order, scrambleLevel, t])
   const required = assembly[step]
   const level = confusionLevel(co2)
 
@@ -24,10 +28,10 @@ export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: num
     const nextLevel = confusionLevel(game.co2)
     if (game.step < assembly.length && nextLevel !== game.level) {
       game.level = nextLevel
-      setTray(describeStep(game.step, tray.parts.map(({ id }) => id), nextLevel))
+      setScrambleLevel(nextLevel)
       setMistakes([])
-      if (nextLevel === 1) setNote('Empiezas a sentirte pesado…')
-      if (nextLevel === 3) setNote('Todo se ve borroso. ¡Rápido!')
+      if (nextLevel === 1) setNote('FILTER.Note.Heavy')
+      if (nextLevel === 3) setNote('FILTER.Note.Blur')
     }
 
     if (game.step === assembly.length) {
@@ -53,7 +57,7 @@ export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: num
       game.co2 = Math.min(100, game.co2 + 7)
       setCo2(game.co2)
       setMistakes((parts) => [...parts, id])
-      setNote('Negativo. Eso no va ahí. El aire empeora.')
+      setNote('FILTER.Note.Wrong')
       return
     }
 
@@ -61,9 +65,9 @@ export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: num
     game.level = confusionLevel(game.co2)
     setStep(game.step)
     setMistakes([])
-    const order = tray.parts.map((part) => part.id)
-    setTray(describeStep(game.step, game.level >= 1 ? shuffle(order) : order, game.level))
-    setNote(game.step === assembly.length ? 'No sueltes hasta que cierre.' : 'Afirmativo. Siguiente.')
+    if (game.level >= 1) setOrder((current) => shuffle(current))
+    setScrambleLevel(game.level)
+    setNote(game.step === assembly.length ? 'FILTER.Note.Hold' : 'FILTER.Note.Correct')
   }
 
   function release() {
@@ -72,12 +76,12 @@ export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: num
 
   return (
     <div className="mj">
-      <Meter label="CO₂ en la cabina" text={`${Math.round(co2)}%`} value={co2} color={co2 > 80 ? 'var(--alert)' : co2 > 55 ? 'var(--sun)' : 'var(--life)'} />
+      <Meter label={t('FILTER.Co2')} text={`${Math.round(co2)}%`} value={co2} color={co2 > 80 ? 'var(--alert)' : co2 > 55 ? 'var(--sun)' : 'var(--life)'} />
       <Adapter step={step} />
       <div className="radio">
         <Icon name="i-bip" />
         <div aria-live="polite">
-          <div className="paso">{required ? `Paso ${step + 1} de ${assembly.length} · ${uses[required]}` : 'Último paso'}</div>
+          <div className="paso">{required ? t('FILTER.Step', { step: step + 1, total: assembly.length, instruction: t(`FILTER.Use.${required}`) }) : t('FILTER.LastStep')}</div>
           <div className="pide">{tray.request}</div>
         </div>
       </div>
@@ -109,10 +113,10 @@ export function FilterGame({ onFinish }: { onFinish: (success: boolean, co2: num
             if (event.key === ' ' || event.key === 'Enter') release()
           }}
         >
-          <i style={{ width: `${seal * 100}%` }} /><span>Mantén presionado para pegar la cinta</span>
+          <i style={{ width: `${seal * 100}%` }} /><span>{t('FILTER.Seal')}</span>
         </button>
       )}
-      <div className="mj-nota" aria-live="polite">{note}</div>
+      <div className="mj-nota" aria-live="polite">{t(note)}</div>
     </div>
   )
 }

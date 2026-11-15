@@ -1,21 +1,7 @@
+import type { Translate } from '../../i18n/useTranslation'
+
 export const assembly = ['bolsa', 'carton', 'cinta', 'manguera'] as const
 export type Part = (typeof assembly)[number] | 'cuchara' | 'linterna'
-
-export const partNames: Record<Part, string> = {
-  bolsa: 'Bolsa',
-  carton: 'Cartón',
-  cinta: 'Cinta gris',
-  manguera: 'Manguera',
-  cuchara: 'Cuchara',
-  linterna: 'Linterna',
-}
-
-export const uses = {
-  bolsa: 'envuelve el filtro',
-  carton: 'que la bolsa no se aplaste',
-  cinta: 'séllalo todo',
-  manguera: 'conéctalo a la ranura',
-}
 
 export function shuffle(parts: Part[]) {
   const shuffled = [...parts]
@@ -34,6 +20,7 @@ export function confusionLevel(co2: number) {
 
 export function scramble(text: string, level: number) {
   const letters = [...text]
+  if (letters.length < 3) return text
   for (let count = 0; count < level * 2; count++) {
     const index = 1 + Math.floor(Math.random() * (letters.length - 2))
     if (letters[index] === ' ' || letters[index + 1] === ' ') continue
@@ -44,14 +31,14 @@ export function scramble(text: string, level: number) {
   return letters.join('')
 }
 
-export function describeStep(step: number, parts: Part[], level: number) {
+export function describeStep(step: number, parts: Part[], level: number, t: Translate) {
   const required = assembly[step]
   return {
-    request: required ? scramble(partNames[required].toUpperCase(), level) : '¡SÉLLALO!',
-    parts: parts.map((id) => ({ id, label: scramble(partNames[id], level) })),
+    request: required ? scramble(t(`FILTER.Part.${required}`).toUpperCase(), level) : t('FILTER.SealRequest'),
+    parts: parts.map((id) => ({ id, label: scramble(t(`FILTER.Part.${id}`), level) })),
   }
 }
 
 export function createTray() {
-  return describeStep(0, shuffle([...assembly, 'cuchara', 'linterna']), 0)
+  return shuffle([...assembly, 'cuchara', 'linterna'])
 }

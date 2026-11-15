@@ -1,5 +1,5 @@
+import { useTranslation } from '../i18n/useTranslation'
 import type { Dispatch } from 'react'
-import { missions } from '../data/missions'
 import { DustGame } from '../game/dust/DustGame'
 import { FilterGame } from '../game/filter/FilterGame'
 import { LeakGame } from '../game/leaks/LeakGame'
@@ -19,6 +19,7 @@ type MissionViewProps = {
 
 /** Muestra la pantalla que corresponde a la fase actual de la misión. */
 export function MissionView({ game, dispatch }: MissionViewProps) {
+  const { t } = useTranslation()
   const { phase, sol, resources } = game
 
   switch (phase.type) {
@@ -36,13 +37,13 @@ export function MissionView({ game, dispatch }: MissionViewProps) {
       return <RoutineView sol={sol} resources={resources} shield={game.plan.shield} onChoose={(mission) => dispatch({ type: 'choose', mission })} />
 
     case 'instructions': {
-      const mission = missions[phase.mission]
+      const { mission } = phase
       return (
         <div className="carta carta-centrada">
-          <h2 className="dice" style={{ fontSize: '1.5rem' }}>{mission.title}</h2>
-          <p className="lead">{mission.instructions}</p>
-          <button className="btn" type="button" onClick={() => dispatch({ type: 'start' })}>¡Ya!</button>
-          <button className="btn sec" type="button" onClick={() => dispatch({ type: 'back' })}>Elegir la otra tarea</button>
+          <h2 className="dice" style={{ fontSize: '1.5rem' }}>{t(`SHIP.${mission}.Title`)}</h2>
+          <p className="lead">{t(`SHIP.${mission}.Instructions`)}</p>
+          <button className="btn" type="button" onClick={() => dispatch({ type: 'start' })}>{t('SHIP.Start')}</button>
+          <button className="btn sec" type="button" onClick={() => dispatch({ type: 'back' })}>{t('SHIP.Back')}</button>
         </div>
       )
     }

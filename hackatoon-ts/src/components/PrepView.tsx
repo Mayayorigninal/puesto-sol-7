@@ -1,3 +1,4 @@
+import { useTranslation } from '../i18n/useTranslation'
 import { useState } from 'react'
 import { spaceWeather } from '../data/spaceWeather.ts'
 import { applyPlan, canAfford, planCost, rules, stormRisk, type Plan, type Resources } from '../game/rules.ts'
@@ -23,10 +24,11 @@ type ChoiceProps = {
 }
 
 function Choice({ icon, title, detail, cost, active, disabled, className, onToggle }: ChoiceProps) {
+  const { t } = useTranslation()
   return (
     <button type="button" className={`prep-op ${className}`} aria-pressed={active} disabled={disabled} onClick={onToggle}>
       <Icon name={icon} />
-      <span className="prep-txt">{title}<small>{disabled ? 'No te alcanza la energía.' : detail}</small></span>
+      <span className="prep-txt">{title}<small>{disabled ? t('PREP.NotEnough') : detail}</small></span>
       <span className="prep-costo"><Icon name="i-bolt" />{cost}</span>
     </button>
   )
@@ -34,6 +36,7 @@ function Choice({ icon, title, detail, cost, active, disabled, className, onTogg
 
 /** Fase de Preparación: ves el clima espacial del día y decides en qué gastar la energía. */
 export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
+  const { t, rich } = useTranslation()
   const [plan, setPlan] = useState<Plan>({ shield: false, experiment: false })
   const weather = spaceWeather[sol - 1]
   const risk = stormRisk(weather.flare)
@@ -48,28 +51,28 @@ export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
   return (
     <div className="carta prep">
       <div>
-        <div className="eyebrow">Sol {sol} de {rules.sols} · Preparación</div>
-        <h2 style={{ marginTop: 4 }}>¿En qué gastamos la energía hoy?</h2>
+        <div className="eyebrow">{t('PREP.Sol', { sol, total: rules.sols })}</div>
+        <h2 style={{ marginTop: 4 }}>{t('PREP.Title')}</h2>
       </div>
       <BaseScene resources={applyPlan(resources, plan)} risk={risk.level} shield={plan.shield} experimenting={plan.experiment} />
       <WeatherReport weather={weather} />
       <div className="prep-ops">
         <Choice
-          icon="i-shield" className="prep-blindaje" title="Activar el blindaje" cost={rules.shieldCost}
-          detail={risk.chance > 0 ? 'La tripulación baja al refugio. Si llega una tormenta, está a salvo.' : 'Hoy no hay alerta: sería gastar energía de más.'}
+          icon="i-shield" className="prep-blindaje" title={t('PREP.Shield')} cost={rules.shieldCost}
+          detail={risk.chance > 0 ? t('PREP.ShieldAlert') : t('PREP.ShieldQuiet')}
           active={plan.shield} disabled={blocked('shield')} onToggle={() => toggle('shield')}
         />
         <Choice
-          icon="i-flask" className="prep-ciencia" title="Hacer un experimento" cost={rules.experimentCost}
-          detail={`Avanza la misión. Llevas ${resources.science} de ${rules.scienceGoal}.`}
+          icon="i-flask" className="prep-ciencia" title={t('PREP.Experiment')} cost={rules.experimentCost}
+          detail={t('PREP.ExperimentDetail', { science: resources.science, goal: rules.scienceGoal })}
           active={plan.experiment} disabled={blocked('experiment')} onToggle={() => toggle('experiment')}
         />
       </div>
       <p className="prep-saldo" aria-live="polite">
-        Te {left === 1 ? 'queda' : 'quedan'} <b><Icon name="i-bolt" />{left}</b> de energía.
-        {!plan.shield && !plan.experiment && ' Si no gastas nada, la guardas para mañana.'}
+        {rich(left === 1 ? 'PREP.BalanceOne' : 'PREP.BalanceMany', { energy: <b><Icon name="i-bolt" />{left}</b> })}
+        {!plan.shield && !plan.experiment && t('PREP.Save')}
       </p>
-      <button className="btn" type="button" onClick={() => onConfirm(plan)}>Empezar el día</button>
+      <button className="btn" type="button" onClick={() => onConfirm(plan)}>{t('PREP.Begin')}</button>
     </div>
   )
 }

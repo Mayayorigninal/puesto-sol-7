@@ -1,4 +1,4 @@
-import { experiments } from '../data/experiments'
+import { useTranslation } from '../i18n/useTranslation'
 import { rules } from '../game/rules.ts'
 
 type ExperimentAnimProps = {
@@ -9,12 +9,12 @@ type ExperimentAnimProps = {
 
 /** Pequeña animación (solo CSS) de un frasco burbujeando al completar un experimento. */
 export function ExperimentAnim({ science, onDone }: ExperimentAnimProps) {
-  const experiment = experiments[Math.min(science, experiments.length) - 1]
+  const { t } = useTranslation()
   const missing = Math.max(0, rules.scienceGoal - science)
 
   return (
     <div className="carta carta-centrada">
-      <div className="eyebrow">Laboratorio del puesto</div>
+      <div className="eyebrow">{t('EXPERIMENT.Lab')}</div>
       <svg className="frasco" viewBox="0 0 120 140" aria-hidden="true">
         <path className="frasco-liquido" d="M38 92 L28 118 Q26 126 34 126 H86 Q94 126 92 118 L82 92 Z" />
         <circle className="burbuja b1" cx="48" cy="112" r="5" />
@@ -22,14 +22,13 @@ export function ExperimentAnim({ science, onDone }: ExperimentAnimProps) {
         <circle className="burbuja b3" cx="74" cy="110" r="6" />
         <path className="frasco-vidrio" d="M48 14 H72 M52 14 V58 L26 118 Q22 130 34 130 H86 Q98 130 94 118 L68 58 V14" />
       </svg>
-      <h2 className="dice" style={{ color: 'var(--shield)' }}>¡{experiment.title} listo!</h2>
-      {experiment.fact && <div className="real"><b>Ciencia de verdad</b>{experiment.fact}{experiment.source && <span className="fuente-inline"> — {experiment.source}</span>}</div>}
+      <h2 className="dice" style={{ color: 'var(--shield)' }}>{t('EXPERIMENT.Done', { number: science })}</h2>
       <p className="lead">
         {missing > 0
-          ? `Llevas ${science} de ${rules.scienceGoal}. ${missing === 1 ? 'Falta 1 experimento' : `Faltan ${missing} experimentos`} para cumplir la misión.`
-          : '¡Ya cumpliste la meta científica! Ahora cuida a la tripulación hasta el final.'}
+          ? t(missing === 1 ? 'EXPERIMENT.ProgressOne' : 'EXPERIMENT.ProgressMany', { science, goal: rules.scienceGoal, missing })
+          : t('EXPERIMENT.GoalMet')}
       </p>
-      <button className="btn" type="button" onClick={onDone}>A trabajar</button>
+      <button className="btn" type="button" onClick={onDone}>{t('EXPERIMENT.Continue')}</button>
     </div>
   )
 }

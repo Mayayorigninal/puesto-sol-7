@@ -1,6 +1,7 @@
-import { missions, type Mission } from '../data/missions'
+import { useTranslation, type Translate } from '../i18n/useTranslation'
+import { type Mission } from '../data/missions'
 import { BaseScene } from './BaseScene'
-import { riskLabels, rules, type Resources, type SolReport } from '../game/rules.ts'
+import { rules, type Resources, type SolReport } from '../game/rules.ts'
 
 type SolResultProps = {
   sol: number
@@ -13,63 +14,64 @@ type SolResultProps = {
   onNext: () => void
 }
 
-function stormText({ risk, shielded, storm, stormDamage }: SolReport) {
+function stormText({ risk, shielded, storm, stormDamage }: SolReport, t: Translate) {
   if (risk.chance === 0) {
     return shielded
-      ? 'El Sol estuvo tranquilo. El blindaje no hizo falta y gastó energía.'
-      : 'El Sol estuvo tranquilo. No pasó nada.'
+      ? t('RESULT.QuietShield')
+      : t('RESULT.Quiet')
   }
   if (storm) {
     return shielded
-      ? '¡Llegó una tormenta de partículas! El blindaje protegió a toda la tripulación.'
-      : `¡Llegó una tormenta de partículas y no había blindaje! La tripulación pierde ${stormDamage} ${stormDamage === 1 ? 'corazón' : 'corazones'}.`
+      ? t('RESULT.Shielded')
+      : t(stormDamage === 1 ? 'RESULT.StormHitOne' : 'RESULT.StormHitMany', { count: stormDamage })
   }
   return shielded
-    ? 'La tormenta de partículas no llegó. El blindaje no hizo falta esta vez… pero nadie podía saberlo.'
-    : 'Te arriesgaste y la tormenta de partículas no llegó. Esta vez hubo suerte.'
+    ? t('RESULT.MissedShield')
+    : t('RESULT.Missed')
 }
 
 /** Cierre del sol: cómo salió la tarea, si llegó la tormenta y cuánta energía se cargó. */
 export function SolResult({ sol, mission, value, report, resources, last, onNext }: SolResultProps) {
-  const info = missions[mission]
+  const { t } = useTranslation()
+  const percent = Math.round(mission === 'polvo' ? value * 100 : value)
   const { success, taskEnergy, taskDamage, wearDamage, stormDamage, recharge, risk } = report
   const hearts = taskDamage + wearDamage + stormDamage
   const energy = taskEnergy + recharge
 
   return (
     <div className="carta carta-centrada">
-      <div className="eyebrow">Sol {sol} de {rules.sols} · Resultado</div>
+      <div className="eyebrow">{t('RESULT.Sol', { sol, total: rules.sols })}</div>
       <BaseScene
         resources={resources} risk={risk.level} shield={report.shielded}
         storm={!report.storm ? 'no' : stormDamage > 0 ? 'golpe' : 'detenida'}
       />
       <h2 className="dice" style={{ fontSize: '1.45rem', color: success ? 'var(--life)' : 'var(--alert)' }}>
-        {success ? info.success : info.failure}
+        {t(`SHIP.${mission}.${success ? 'WinTitle' : 'LoseTitle'}`)}
       </h2>
-      <p className="lead">{success ? info.successText : info.failureText(value)}</p>
-      <div className="real"><b>{mission === 'fugas' ? 'Bitácora de BIP' : 'Pasó de verdad'}</b>{info.fact}</div>
+      <p className="lead">{t(`SHIP.${mission}.${success ? 'WinText' : 'LoseText'}`, { percent })}</p>
+      <div className="real"><b>{mission === 'fugas' ? t('RESULT.BipLog') : t('RESULT.Real')}</b>{t(`SHIP.${mission}.Fact`)}</div>
 
       <div className={`noche${stormDamage > 0 ? ' noche-mal' : ''}`}>
-        <b>Clima espacial · {riskLabels[risk.level]} · en esta simulación</b>
-        {stormText(report)}
+        <b>{t('RESULT.Weather', { risk: t(`WEATHER.Risk.${risk.level}`) })}</b>
+        {stormText(report, t)}
       </div>
       {wearDamage > 0 && (
         <div className="noche noche-mal">
-          <b>Soporte vital</b>
-          Van {rules.wearLimit} soles o más sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 corazón.
+          <b>{t('RESULT.Support')}</b>
+          {t('RESULT.Wear', { limit: rules.wearLimit })}
         </div>
       )}
 
       <div className="efectos">
-        {energy > 0 && <span className="chip mas">Energía +{energy}</span>}
-        {energy === 0 && <span className="chip menos">Energía +0 · paneles empolvados</span>}
-        {hearts > 0 && <span className="chip menos">Tripulación −{hearts}</span>}
-        {hearts === 0 && <span className="chip mas">Tripulación a salvo</span>}
+        {energy > 0 && <span className="chip mas">{t('RESULT.Energy', { energy })}</span>}
+        {energy === 0 && <span className="chip menos">{t('RESULT.NoEnergy')}</span>}
+        {hearts > 0 && <span className="chip menos">{t('RESULT.CrewDamage', { hearts })}</span>}
+        {hearts === 0 && <span className="chip mas">{t('RESULT.CrewSafe')}</span>}
       </div>
       {resources.crew > 0 && !last && recharge < rules.recharge && (
-        <p className="lead">Los paneles tienen polvo: hoy cargaron {recharge} de {rules.recharge}.</p>
+        <p className="lead">{t('RESULT.Recharge', { recharge, total: rules.recharge })}</p>
       )}
-      <button className="btn" type="button" onClick={onNext}>{last ? 'Ver cómo terminó la misión' : `Ir al sol ${sol + 1}`}</button>
+      <button className="btn" type="button" onClick={onNext}>{last ? t('RESULT.End') : t('RESULT.Next', { sol: sol + 1 })}</button>
     </div>
   )
 }

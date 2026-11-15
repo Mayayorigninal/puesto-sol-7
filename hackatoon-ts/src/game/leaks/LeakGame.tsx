@@ -1,4 +1,6 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { Hull } from '../../components/Hull'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
 import { advanceLeaks, createLeaks, deadline } from './leaks'
@@ -9,6 +11,7 @@ const positions = [
 ]
 
 export function LeakGame({ onFinish }: { onFinish: (success: boolean, oxygen: number) => void }) {
+  const { t } = useTranslation()
   const simulation = useRef(createLeaks())
   const [game, setGame] = useState(createLeaks)
 
@@ -40,13 +43,11 @@ export function LeakGame({ onFinish }: { onFinish: (success: boolean, oxygen: nu
   return (
     <div className="mj leak-game">
       <div className="leak-heading">
-        <div><div className="eyebrow">Emergencia · casco dañado</div><h2>¡Que no se escape el aire!</h2></div>
+        <div><div className="eyebrow">{t('LEAK.Emergency')}</div><h2>{t('LEAK.Title')}</h2></div>
         <span className="leak-clock">{Math.max(0, Math.ceil(deadline - game.elapsed))} s</span>
       </div>
-      <Meter label="Oxígeno de la cabina" text={Math.ceil(game.oxygen) + '%'} value={game.oxygen} color={game.oxygen < 30 ? 'var(--alert)' : 'var(--life)'} />
-      <div className={'hull ' + (game.oxygen < 30 ? 'hull-critical' : '')} aria-label="Interior de la nave">
-        <div className="hull-window" aria-hidden="true"><div className="hull-planet" /></div>
-        <div className="hull-label" aria-hidden="true">SOL 7 · CABINA 01</div>
+      <Meter label={t('CABIN.Oxygen')} text={Math.ceil(game.oxygen) + '%'} value={game.oxygen} color={game.oxygen < 30 ? 'var(--alert)' : 'var(--life)'} />
+      <Hull critical={game.oxygen < 30}>
         {game.holes.map((hole) => {
           if (hole.opensAt > game.elapsed) return null
           const held = hole.holders.size > 0
@@ -56,7 +57,7 @@ export function LeakGame({ onFinish }: { onFinish: (success: boolean, oxygen: nu
               type="button"
               className={'breach ' + (hole.sealed ? 'breach-sealed' : held ? 'breach-held' : 'breach-open')}
               style={{ left: positions[hole.id][0] + '%', top: positions[hole.id][1] + '%', '--seal': hole.progress * 360 + 'deg' } as CSSProperties}
-              aria-label={'Agujero ' + (hole.id + 1) + (hole.sealed ? ', sellado' : ', mantén presionado para taparlo')}
+              aria-label={t(hole.sealed ? 'CABIN.SealedHole' : 'LEAK.OpenHole', { number: hole.id + 1 })}
               aria-disabled={hole.sealed}
               onPointerDown={(event) => {
                 if (event.button !== 0 || hole.sealed) return
@@ -81,9 +82,9 @@ export function LeakGame({ onFinish }: { onFinish: (success: boolean, oxygen: nu
             </button>
           )
         })}
-      </div>
-      <div className="leak-status"><span>{sealed} / {game.holes.length} sellados</span><span>{exposed > 0 ? exposed + ' fugas abiertas' : 'Aire contenido'}</span></div>
-      <p className="mj-nota">Mantén pulsado cada agujero hasta sellarlo. Puedes usar varios dedos o Tab + espacio.</p>
+      </Hull>
+      <div className="leak-status"><span>{t('CABIN.Sealed', { sealed, total: game.holes.length })}</span><span>{exposed > 0 ? t(exposed === 1 ? 'CABIN.LeakOne' : 'CABIN.LeakMany', { count: exposed }) : t('CABIN.Contained')}</span></div>
+      <p className="mj-nota">{t('LEAK.Hint')}</p>
     </div>
   )
 }

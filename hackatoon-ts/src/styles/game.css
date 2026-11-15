@@ -32,6 +32,37 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--b
 .energia .n { font-family: var(--display); font-weight: 700; font-size: 1.1rem; color: var(--sun); font-variant-numeric: tabular-nums; }
 .bolt { width: 15px; height: 15px; color: var(--sun); }
 
+.volume-control { position: relative; flex: none; }
+.volume-control summary {
+  display: grid; place-items: center; width: 36px; height: 36px; cursor: pointer;
+  list-style: none; border-radius: 8px; color: var(--muted);
+}
+.volume-control summary::-webkit-details-marker { display: none; }
+.volume-control summary svg { width: 19px; height: 19px; }
+.volume-control summary:hover, .volume-control[open] summary { background: var(--panel-2); color: var(--ink); }
+.volume-control :focus-visible { outline: 2px solid var(--sun); outline-offset: 2px; }
+.volume-panel {
+  position: absolute; z-index: 5; inset-block-start: calc(100% + 5px); inset-inline-end: 0;
+  display: grid; gap: 8px; width: 190px; padding: 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 8px 20px #0006;
+}
+.volume-channel {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  color: var(--ink); font: .72rem var(--data);
+}
+.volume-channel span[aria-hidden] { color: var(--muted); }
+.volume-channel input { grid-column: 1 / -1; width: 100%; height: 24px; margin: 0; accent-color: var(--sun); }
+.language-control {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  border-top: 1px solid var(--line); padding-top: 10px;
+  color: var(--ink); font: .72rem var(--data);
+}
+.language-control select {
+  padding: 5px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--panel-2); color: var(--ink); font: inherit;
+}
+
 .view { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
 .pad {
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -467,7 +498,7 @@ nav button:focus-visible { outline: 2px solid var(--sun); outline-offset: -3px; 
 /* ---- pantallas angostas y celular horizontal ---- */
 .clima-riesgo { display: inline-block; margin-top: 5px; }
 .barra .et { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 359px) { .et-fecha { display: none; } }
+@media (max-width: 389px) { .et-fecha { display: none; } }
 .girar { display: none; }
 /* Un celular acostado es ancho pero muy bajo: los minijuegos no caben. */
 @media (orientation: landscape) and (max-height: 500px) {

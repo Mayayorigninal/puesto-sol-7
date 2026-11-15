@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { Meter } from '../../components/Meter'
 import { usePatchStore } from '../../store/usePatchStore'
 import { countLeaking, patchDeadline } from './patches'
@@ -12,10 +13,11 @@ export function PatchClock() {
 }
 
 export function PatchOxygen() {
+  const { t } = useTranslation()
   const oxygen = usePatchStore((state) => Math.ceil(state.oxygen))
   return (
     <Meter
-      label="Oxígeno de la cabina"
+      label={t('CABIN.Oxygen')}
       text={oxygen + '%'}
       value={oxygen}
       color={oxygen < 30 ? 'var(--alert)' : 'var(--life)'}
@@ -24,13 +26,14 @@ export function PatchOxygen() {
 }
 
 export function PatchCounter() {
+  const { t } = useTranslation()
   const total = usePatchStore((state) => state.patches.length)
   const sealed = usePatchStore((state) => state.patches.filter((patch) => patch.sealed).length)
   const leaking = usePatchStore((state) => countLeaking(state.patches))
   return (
     <div className="leak-status" aria-live="polite">
-      <span>{sealed} / {total} sellados</span>
-      <span>{leaking > 0 ? leaking + (leaking === 1 ? ' fuga abierta' : ' fugas abiertas') : 'Aire contenido'}</span>
+      <span>{t('CABIN.Sealed', { sealed, total })}</span>
+      <span>{leaking > 0 ? t(leaking === 1 ? 'CABIN.LeakOne' : 'CABIN.LeakMany', { count: leaking }) : t('CABIN.Contained')}</span>
     </div>
   )
 }

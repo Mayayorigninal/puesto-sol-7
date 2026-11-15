@@ -1,13 +1,15 @@
+import { useTranslation } from '../i18n/useTranslation'
 import { rules } from '../game/rules.ts'
 
 /** Remo, el encargado del puesto. Su cara cambia según cómo esté la tripulación. */
 export function Remo({ crew }: { crew: number }) {
+  const { t } = useTranslation()
   const mood = crew >= 4 ? 'bien' : crew >= 2 ? 'regular' : 'mal'
   const color = { bien: '#3FC9A0', regular: '#F2B134', mal: '#EF6B4A' }[mood]
   const mouth = { bien: 'M62 97q12 10 24 0', regular: 'M63 100h22', mal: 'M63 103q11 -9 22 0' }[mood]
 
   return (
-    <svg className="remo" viewBox="0 0 148 166" role="img" aria-label={`Remo, encargado del puesto. Tripulación: ${crew} de ${rules.crewMax}`}>
+    <svg className="remo" viewBox="0 0 148 166" role="img" aria-label={t('ENDING.Remo', { crew, max: rules.crewMax })}>
       <ellipse cx="74" cy="156" rx="38" ry="7" fill="#000" opacity=".3" />
       <rect x="42" y="110" width="64" height="44" rx="17" fill="#D8DEE9" />
       <rect x="55" y="121" width="38" height="20" rx="6" fill={color} opacity=".85" />

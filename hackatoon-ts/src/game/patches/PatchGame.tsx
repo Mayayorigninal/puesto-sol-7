@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { useLayoutEffect } from 'react'
 import { Hull } from '../../components/Hull'
 import { usePatchStore } from '../../store/usePatchStore'
@@ -9,6 +10,7 @@ import { patchLayout } from './patches'
 type PatchGameProps = { onFinish: (success: boolean, oxygen: number) => void }
 
 export function PatchGame({ onFinish }: PatchGameProps) {
+  const { t } = useTranslation()
   const reset = usePatchStore((state) => state.reset)
   const tick = usePatchStore((state) => state.tick)
   const critical = usePatchStore((state) => state.oxygen < 30)
@@ -29,8 +31,8 @@ export function PatchGame({ onFinish }: PatchGameProps) {
     <div className="mj leak-game patch-game">
       <div className="leak-heading">
         <div>
-          <div className="eyebrow">Emergencia · micrometeoritos</div>
-          <h2>¡Encaja los parches!</h2>
+          <div className="eyebrow">{t('PATCH.Emergency')}</div>
+          <h2>{t('SHIP.parches.Title')}</h2>
         </div>
         <PatchClock />
       </div>
@@ -39,7 +41,7 @@ export function PatchGame({ onFinish }: PatchGameProps) {
         {patchLayout.map((_, id) => <PatchHole key={id} id={id} />)}
       </Hull>
       <PatchCounter />
-      <p className="mj-nota">Toca un parche para girarlo 90°. Se sella cuando su forma coincide con el agujero.</p>
+      <p className="mj-nota">{t('PATCH.Hint')}</p>
     </div>
   )
 }

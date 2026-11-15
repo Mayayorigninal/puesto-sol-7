@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { Milestone } from '../data/almanac'
 import { initialGame, missionReducer, type GameAction, type GameState } from '../game/missionState'
+import { useAudioStore } from './useAudioStore'
 
 type GameStore = {
   game: GameState
@@ -14,11 +15,27 @@ type SavedGame = Omit<GameState, 'discoveries'> & { discoveries: Milestone[] }
 
 export const useGameStore = create<GameStore>()(
   persist<GameStore, [], [], SavedGame | null>(
-    (set) => ({
+    (set, get) => ({
       game: initialGame,
-      dispatch: (action) => set((state) => ({
-        game: missionReducer(state.game, action),
-      })),
+      dispatch: (action) => {
+        const previousGame = get().game
+        const game = missionReducer(previousGame, action)
+        set({ game })
+
+        if (action.type !== 'finish' || game === previousGame) return
+
+        const { effectsVolume } = useAudioStore.getState()
+        if (effectsVolume === 0) return
+
+        const filename = action.success
+          ? '654321__gronkjaer__correctch_new.mp3'
+          : '131657__bertrof__game-sound-wrong.wav'
+        const sound = new Audio(`${import.meta.env.BASE_URL}sound/${filename}`)
+        sound.volume = effectsVolume / 100
+        void sound.play().catch(() => {
+          // La partida sigue si el navegador bloquea el audio.
+        })
+      },
     }),
     {
       name: 'puesto-sol-7',

@@ -25,13 +25,6 @@ export const rules = {
 } as const
 
 export type RiskLevel = 'ninguno' | 'bajo' | 'medio' | 'alto' | 'extremo'
-export const riskLabels: Record<RiskLevel, string> = {
-  ninguno: 'Sin riesgo',
-  bajo: 'Riesgo bajo',
-  medio: 'Riesgo medio',
-  alto: 'Riesgo alto',
-  extremo: 'Riesgo extremo',
-}
 export type Risk = { level: RiskLevel; chance: number; damage: number }
 
 const riskByLevel: Record<RiskLevel, Risk> = {

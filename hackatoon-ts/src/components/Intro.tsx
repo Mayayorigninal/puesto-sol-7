@@ -1,23 +1,24 @@
-import { donkiCredit } from '../data/spaceWeather.ts'
+import { useTranslation } from '../i18n/useTranslation'
 import { initialResources, rules } from '../game/rules.ts'
 import { BaseScene } from './BaseScene'
 import { Icon } from './Icon'
 
 /** Pantalla inicial: explica la meta de la misión en tres líneas. */
 export function Intro({ onBegin }: { onBegin: () => void }) {
+  const { t, rich } = useTranslation()
   return (
     <div className="carta carta-centrada">
       <BaseScene resources={initialResources} />
-      <div className="quien">BIP · computadora del puesto</div>
-      <h2 className="dice">Capitán, bienvenido al Puesto Sol 7, en la Luna. Tenemos {rules.sols} soles de misión.</h2>
+      <div className="quien">{t('INTRO.Speaker')}</div>
+      <h2 className="dice">{t('INTRO.Welcome', { sols: rules.sols })}</h2>
       <ul className="reglas">
-        <li><Icon name="i-flask" className="on-ciencia" /><span>Completa <b>{rules.scienceGoal} experimentos</b> antes de que termine la misión.</span></li>
-        <li><Icon name="i-heart" className="on-trip" /><span>No dejes que la <b>tripulación</b> se quede sin corazones.</span></li>
-        <li><Icon name="i-bolt" className="on-energia" /><span>Todo cuesta <b>energía</b>, y nunca alcanza para todo.</span></li>
-        <li><Icon name="i-sun" className="on-energia" /><span>Cada sol verás el <b>clima espacial real</b> de ese día.</span></li>
+        <li><Icon name="i-flask" className="on-ciencia" /><span>{rich('INTRO.Science', { emphasis: <b>{t('INTRO.ScienceEmphasis', { count: rules.scienceGoal })}</b> })}</span></li>
+        <li><Icon name="i-heart" className="on-trip" /><span>{rich('INTRO.Crew', { emphasis: <b>{t('INTRO.CrewEmphasis')}</b> })}</span></li>
+        <li><Icon name="i-bolt" className="on-energia" /><span>{rich('INTRO.Energy', { emphasis: <b>{t('INTRO.EnergyEmphasis')}</b> })}</span></li>
+        <li><Icon name="i-sun" className="on-energia" /><span>{rich('INTRO.Weather', { emphasis: <b>{t('INTRO.WeatherEmphasis')}</b> })}</span></li>
       </ul>
-      <button className="btn" type="button" onClick={onBegin}>Empezar la misión</button>
-      <p className="credito">{donkiCredit}</p>
+      <button className="btn" type="button" onClick={onBegin}>{t('INTRO.Begin')}</button>
+      <p className="credito">{t('WEATHER.Credit')}</p>
     </div>
   )
 }

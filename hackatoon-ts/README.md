@@ -29,6 +29,12 @@ Ganas si completas **5 experimentos** en los 8 soles con la tripulación viva. P
 - **Son datos guardados, no en vivo.** El juego lo dice en pantalla.
 - **Qué NO es dato de la NASA:** las probabilidades de tormenta, los costos de energía y los corazones son diseño del juego (`src/game/rules.ts`). En esa semana real DONKI no registró ninguna tormenta de partículas; el juego lo cuenta en la pantalla final.
 
+## Traducciones
+
+El juego arranca en inglés. Puedes cambiar a español desde **Volumen e idioma** (el icono del altavoz, junto a los recursos). El navegador recuerda la elección.
+
+Los catálogos están en `src/i18n/EN/En.json` y `src/i18n/ES/Es.json`. Usa la misma clave en ambos archivos. En React, llama a `useTranslation()` y usa `t('SHIP.parches.WinText')` para obtener el texto. Para valores variables, escribe `{{percent}}` en el JSON y pásalo como `{ percent }` al llamar a `t`.
+
 ## Balance
 
 `npm run balance` juega 20,000 partidas automáticas por estrategia. La meta es que ni «protegerse siempre» ni «nunca protegerse» ganen seguido, y que decidir con criterio sí.
@@ -36,7 +42,8 @@ Ganas si completas **5 experimentos** en los 8 soles con la tripulación viva. P
 ## Estructura
 
 - `src/components` — vistas (Preparación, Rutina, Resultado, Final) y piezas compartidas.
-- `src/data` — clima espacial, textos de las misiones, fichas y experimentos.
+- `src/data` — datos de clima espacial e identificadores de misiones y fichas.
+- `src/i18n` — catálogos y selección de idioma.
 - `src/game` — reglas (`rules.ts`), fases de la misión (`missionState.ts`) y la lógica de cada minijuego.
 - `src/store` — estado con Zustand (la partida se guarda en el navegador).
 - `src/styles` — estilos.
