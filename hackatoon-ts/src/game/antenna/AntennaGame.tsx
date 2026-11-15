@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { useEffect, useState, type PointerEvent } from 'react'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
@@ -30,14 +31,9 @@ function snapshot(antenna: Antenna): View {
   }
 }
 
-const notes: Record<AntennaPhase, string> = {
-  temblor: '¡Temblor lunar! La antena se movió.',
-  apuntando: 'Mantén presionado para girar la antena. Suelta cuando apunte a la Tierra.',
-  enviando: `Mensaje en camino… la luz tarda ${lightDelay} s en llegar a la Tierra.`,
-}
-
 /** Minijuego de comunicaciones: reapuntar la antena hacia la Tierra después de un temblor. */
 export function AntennaGame({ onFinish }: AntennaGameProps) {
+  const { t } = useTranslation()
   // La simulación se crea una sola vez y solo se modifica dentro de callbacks.
   const [antenna] = useState(createAntenna)
   const [view, setView] = useState(() => snapshot(antenna))
@@ -73,6 +69,7 @@ export function AntennaGame({ onFinish }: AntennaGameProps) {
   }
   const release = () => setHolding(antenna, false)
 
+  const note = t(`ANTENNA.Note.${view.phase}`, { seconds: lightDelay })
   const good = aimed({ angle: view.angle })
   const pulse = {
     x: pivot.x + (earth.x - pivot.x) * view.progress,
@@ -81,13 +78,13 @@ export function AntennaGame({ onFinish }: AntennaGameProps) {
 
   return (
     <div className="mj antena-juego">
-      <Meter label="Tiempo" text={`${view.remaining} s`} value={view.remaining / duration * 100} color="var(--muted)" />
-      <Meter label="Señal con la Tierra" text={`${view.connections} / ${goal} mensajes`} value={view.signal} color={good ? 'var(--life)' : 'var(--shield)'} />
+      <Meter label={t('DUST.Time')} text={`${view.remaining} s`} value={view.remaining / duration * 100} color="var(--muted)" />
+      <Meter label={t('ANTENNA.Signal')} text={t('ANTENNA.Messages', { count: view.connections, goal })} value={view.signal} color={good ? 'var(--life)' : 'var(--shield)'} />
       <div
         className={`antena-caja fase-${view.phase}`}
         onPointerDown={press} onPointerUp={release} onPointerCancel={release} onLostPointerCapture={release}
       >
-        <svg viewBox="0 0 360 220" role="img" aria-label={`Antena de la base. Señal ${view.signal}%. ${notes[view.phase]}`}>
+        <svg viewBox="0 0 360 220" role="img" aria-label={t('ANTENNA.Image', { signal: view.signal, note })}>
           <rect width="360" height="220" fill="#070B16" />
           {[[30, 30], [80, 70], [140, 20], [205, 90], [320, 120], [60, 120], [300, 30], [250, 140]].map(([x, y]) => (
             <circle key={`${x}-${y}`} cx={x} cy={y} r="1.300" fill="#E8EDF7" opacity=".7" />
@@ -118,15 +115,15 @@ export function AntennaGame({ onFinish }: AntennaGameProps) {
             <circle cx={pivot.x} cy={pivot.y - 62} r="3.500" fill={good ? '#3FC9A0' : '#EF6B4A'} />
           </g>
         </svg>
-        {view.phase === 'temblor' && <div className="antena-aviso">¡TEMBLOR!</div>}
+        {view.phase === 'temblor' && <div className="antena-aviso">{t('ANTENNA.Quake')}</div>}
       </div>
       <button
         className="btn antena-boton" type="button"
         onPointerDown={press} onPointerUp={release} onPointerCancel={release} onLostPointerCapture={release}
       >
-        Mantén para girar
+        {t('ANTENNA.Hold')}
       </button>
-      <p className="mj-nota" aria-live="polite">{notes[view.phase]}</p>
+      <p className="mj-nota" aria-live="polite">{note}</p>
     </div>
   )
 }

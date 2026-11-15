@@ -5,27 +5,25 @@ import { FlareScale } from './FlareScale'
 import { Icon } from './Icon'
 
 /** El reporte de clima espacial del día, con los datos reales de NASA DONKI. */
-export function WeatherReport({ weather }: { weather: SolWeather }) {
-  const { t, rich, formatDate } = useTranslation()
-  const { flare, flareLink, cmeSpeed, kp, alerts, date } = weather
 export function WeatherReport({ weather, hidden = false }: { weather: SolWeather; hidden?: boolean }) {
+  const { t, rich, formatDate } = useTranslation()
   if (hidden) {
     return (
-      <section className="clima clima-oculto" aria-label="Sin pronóstico de clima espacial">
+      <section className="clima clima-oculto" aria-label={t('WEATHER.NoForecast')}>
         <div className="clima-cab">
           <Icon name="i-sun" />
           <div>
-            <div className="eyebrow">Clima espacial · {weather.fecha}</div>
-            <div className="clima-clase">Sin señal con la Tierra</div>
-            <span className="clima-riesgo">Riesgo desconocido</span>
+            <div className="eyebrow">{t('WEATHER.HiddenDate', { date: formatDate(weather.date) })}</div>
+            <div className="clima-clase">{t('WEATHER.NoSignal')}</div>
+            <span className="clima-riesgo">{t('WEATHER.UnknownRisk')}</span>
           </div>
         </div>
-        <p className="clima-aviso">La antena lleva días sin revisión y hoy no llegó el pronóstico. Puede haber una fulguración… o no. Tienes que decidir a ciegas.</p>
+        <p className="clima-aviso">{t('WEATHER.HiddenWarning')}</p>
       </section>
     )
   }
 
-  const { flare, flareLink, cmeSpeed, kp, alerts, fecha } = weather
+  const { flare, flareLink, cmeSpeed, kp, alerts, date } = weather
   const risk = stormRisk(flare)
   const first = flare?.[0]
   const letter = first === 'B' || first === 'C' || first === 'M' || first === 'X' ? first : 'Other'

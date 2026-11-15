@@ -1,22 +1,6 @@
 export const milestones = [
-  'fulguracion', 'particulas', 'fuga', 'parche', 'micrometeorito', 'soyuz', 'polvo', 'arena', 'co2', 'buzon',
+  'fulguracion', 'particulas', 'ejercicio', 'huesos', 'veggie', 'tomates', 'tierra-fija', 'temblores',
+  'fuga', 'parche', 'micrometeorito', 'soyuz', 'polvo', 'arena', 'co2', 'buzon',
 ] as const
-    { id: "fulguracion", title: "Fulguración solar", description: "Un destello gigante de luz y rayos X en el Sol. Tarda unos 8 minutos en llegar. Se clasifican con letras: B, C, M y X. Cada letra es unas 10 veces más fuerte que la anterior.", source: "NASA DONKI — catálogo de fulguraciones (FLR)" },
-    { id: "particulas", title: "Tormenta de partículas", description: "A veces, después de una fulguración fuerte, el Sol lanza partículas rapidísimas que sí pueden dañar a un astronauta. Nadie sabe con certeza si van a llegar, por eso ante una alerta la tripulación se refugia donde hay más blindaje.", source: "NASA — radiación espacial y partículas solares (SEP)" },
-    { id: "ejercicio", title: "Gimnasio espacial", description: "Los astronautas de la estación espacial hacen unas dos horas de ejercicio al día con caminadora, bicicleta y una máquina de pesas. En el juego corres afuera; en la realidad se ejercitan dentro de la nave.", source: "NASA — Astronaut Exercise (2024)" },
-    { id: "huesos", title: "Huesos en el espacio", description: "Sin la gravedad de la Tierra, los huesos y los músculos trabajan menos y se vuelven más pequeños y débiles. El ejercicio diario es la mejor defensa.", source: "NASA — Astronaut Exercise (2024)" },
-    { id: "veggie", title: "Un huerto en el espacio", description: "Veggie es un invernadero del tamaño de una maleta que hay en la estación espacial. Usa luces LED en lugar del Sol. Ahí han crecido lechugas, flores y tomates.", source: "NASA — Veg-05 (Space Station Research)" },
-    { id: "tomates", title: "Tomates espaciales", description: "Los tomates «Red Robin» de Veggie se cosecharon varias veces. Los científicos estudiaron cómo el color de la luz cambia cuánto crecen y a qué saben.", source: "NASA NTRS — VEG-05 Tomato Crop Testing (2024)" },
-    { id: "tierra-fija", title: "La Tierra no se mueve", description: "La Luna siempre le muestra la misma cara a la Tierra. Por eso, vista desde la Luna, la Tierra se queda casi en el mismo lugar del cielo. Una antena bien apuntada se queda conectada. La señal tarda unos 1.3 segundos en llegar.", source: "NASA StarChild (Goddard)" },
-    { id: "temblores", title: "Temblores lunares", description: "Los astronautas del Apolo dejaron sismómetros en la Luna. Entre 1969 y 1977 registraron 28 temblores superficiales, de magnitud 2 a 5 aproximadamente.", source: "NASA — Shrinking Moon May Be Generating Moonquakes (2019)" },
-    { id: "fuga", title: "¡Tenemos una fuga!", description: "El casco de la cabina perdió su sello. Cada agujero abierto reduce el oxígeno disponible en el minijuego.", source: "Bitácora del Puesto Sol 7" },
-    { id: "parche", title: "Reparación de emergencia", description: "Mantener presionado un parche permite fijarlo. Si lo sueltas antes de tiempo, la fuga vuelve a abrirse.", source: "Manual de BIP · simulación" },
-    { id: "micrometeorito", title: "Micrometeoritos", description: "Granitos de roca o metal, a veces más chicos que un grano de arena, que viajan a decenas de kilómetros por segundo. A esa velocidad pueden perforar el casco, por eso las naves llevan blindaje en capas.", source: "NASA — micrometeoroides y basura espacial" },
-    { id: "soyuz", title: "El agujero de la Soyuz", description: "En 2018 la estación espacial perdía aire por un agujero de 2 mm en una nave Soyuz. La tripulación lo tapó con cinta y luego lo selló con una gasa con resina epóxica.", source: "NASA / ESA — Soyuz MS-09, agosto de 2018" },
-    { id: "polvo", title: "Polvo lunar", description: "No es tierra normal: es vidrio molido. Como en la Luna no hay viento ni agua, cada granito sigue teniendo filos. Se pega con electricidad estática, por eso si lo frotas vuelve.", source: "NASA — misiones Apolo" },
-    { id: "arena", title: "Limpiar con arena", description: "En Marte, el módulo InSight se estaba quedando sin energía por el polvo. La solución fue echarle arena encima: el viento arrastró los granos gruesos y estos tumbaron el polvo fino.", source: "NASA/JPL — misión InSight, 2021" },
-    { id: "co2", title: "El aire que exhalas", description: "Lo peligroso no es quedarte sin oxígeno: es que el aire que sacas (CO₂) se quede contigo. Y antes de hacerte daño te pone torpe y con sueño.", source: "NASA — soporte vital" },
-    { id: "buzon", title: "El buzón del Apolo 13", description: "Los filtros de repuesto eran cuadrados y la ranura era redonda. Los astronautas armaron un adaptador con bolsas, cartón, cinta gris y una manguera, siguiendo instrucciones por radio.", source: "NASA — Apolo 13, abril de 1970" }
-  ] as const
 
 export type Milestone = (typeof milestones)[number]

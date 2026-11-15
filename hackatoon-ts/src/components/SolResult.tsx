@@ -33,10 +33,8 @@ function stormText({ risk, shielded, storm, stormDamage }: SolReport, t: Transla
 /** Cierre del sol: cómo salió la tarea, si llegó la tormenta y cuánta energía se cargó. */
 export function SolResult({ sol, mission, value, report, resources, last, onNext }: SolResultProps) {
   const { t } = useTranslation()
-  const percent = Math.round(mission === 'polvo' ? value * 100 : value)
-  const { success, taskEnergy, taskDamage, wearDamage, stormDamage, recharge, risk } = report
-  const hearts = taskDamage + wearDamage + stormDamage
-  const info = missions[mission]
+  const count = Math.round(value)
+  const percent = mission === 'polvo' ? Math.round(value * 100) : count
   const { success, taskEnergy, taskDamage, wearDamage, stormDamage, recharge, risk, oxygenPaid, airDamage, hungerDamage, harvested, forecastLost } = report
   const hearts = taskDamage + wearDamage + stormDamage + airDamage + hungerDamage
   const energy = taskEnergy + recharge
@@ -51,7 +49,7 @@ export function SolResult({ sol, mission, value, report, resources, last, onNext
       <h2 className="dice" style={{ fontSize: '1.45rem', color: success ? 'var(--life)' : 'var(--alert)' }}>
         {t(`SHIP.${mission}.${success ? 'WinTitle' : 'LoseTitle'}`)}
       </h2>
-      <p className="lead">{t(`SHIP.${mission}.${success ? 'WinText' : 'LoseText'}`, { percent })}</p>
+      <p className="lead">{t(`SHIP.${mission}.${success ? 'WinText' : 'LoseText'}`, { percent, count })}</p>
       <div className="real"><b>{mission === 'fugas' ? t('RESULT.BipLog') : t('RESULT.Real')}</b>{t(`SHIP.${mission}.Fact`)}</div>
 
       <div className={`noche${stormDamage > 0 ? ' noche-mal' : ''}`}>
@@ -62,40 +60,34 @@ export function SolResult({ sol, mission, value, report, resources, last, onNext
         <div className="noche noche-mal">
           <b>{t('RESULT.Support')}</b>
           {t('RESULT.Wear', { limit: rules.wearLimit })}
-          <b>Soporte vital</b>
-          Van {rules.wearLimit} soles sin mantenimiento y el aire se puso pesado: la tripulación pierde 1 corazón.
         </div>
       )}
       {hungerDamage > 0 && (
         <div className="noche noche-mal">
-          <b>Despensa</b>
-          Se acabó la comida y la tripulación pasó el día con hambre: pierde 1 corazón.
+          <b>{t('RESULT.Pantry')}</b>
+          {t('RESULT.Hunger')}
         </div>
       )}
       {airDamage > 0 && (
         <div className="noche noche-mal">
-          <b>Oxígeno</b>
-          No alcanzó la energía para producir oxígeno: la tripulación pierde 1 corazón.
+          <b>{t('RESULT.Oxygen')}</b>
+          {t('RESULT.AirDamage')}
         </div>
       )}
       {forecastLost && !last && resources.crew > 0 && (
         <div className="noche noche-mal">
-          <b>Comunicaciones</b>
-          La antena no tiene señal: mañana no llegará el pronóstico del clima espacial desde la Tierra.
+          <b>{t('RESULT.Comms')}</b>
+          {t('RESULT.ForecastLost')}
         </div>
       )}
 
       <div className="efectos">
-        {energy > 0 && <span className="chip mas">{t('RESULT.Energy', { energy })}</span>}
-        {energy === 0 && <span className="chip menos">{t('RESULT.NoEnergy')}</span>}
+        <span className="chip mas">{t('RESULT.Panels', { energy })}</span>
+        {oxygenPaid > 0 && <span className="chip menos">{t('RESULT.OxygenPaid', { count: oxygenPaid })}</span>}
+        {harvested > 0 && <span className="chip mas">{t('RESULT.FoodGained', { count: harvested })}</span>}
+        <span className="chip menos">{t('RESULT.FoodSpent', { count: rules.foodPerSol })}</span>
         {hearts > 0 && <span className="chip menos">{t('RESULT.CrewDamage', { hearts })}</span>}
         {hearts === 0 && <span className="chip mas">{t('RESULT.CrewSafe')}</span>}
-        <span className="chip mas">Paneles +{energy}</span>
-        {oxygenPaid > 0 && <span className="chip menos">Oxígeno −{oxygenPaid}</span>}
-        {harvested > 0 && <span className="chip mas">Comida +{harvested}</span>}
-        <span className="chip menos">Comida −{rules.foodPerSol}</span>
-        {hearts > 0 && <span className="chip menos">Tripulación −{hearts}</span>}
-        {hearts === 0 && <span className="chip mas">Tripulación a salvo</span>}
       </div>
       {resources.crew > 0 && !last && recharge < rules.recharge && (
         <p className="lead">{t('RESULT.Recharge', { recharge, total: rules.recharge })}</p>

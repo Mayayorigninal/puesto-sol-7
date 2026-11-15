@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { useState } from 'react'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
@@ -11,12 +12,6 @@ const plantSprite: Record<PotStage, string> = {
   lista: sprite('planta-lista'),
   seca: sprite('planta-seca'),
 }
-const notes: Record<TapResult, string> = {
-  cosecha: '¡Cosechada!',
-  temprano: '¡Todavía no estaba lista! Hubo que volver a sembrar.',
-  seca: 'Esa ya se había secado.',
-}
-
 type PotView = { stage: PotStage; growth: number }
 
 function snapshot(harvest: Harvest) {
@@ -36,10 +31,11 @@ function sameView(a: View, b: View) {
 
 /** Minijuego de comida: tocar cada planta justo cuando está lista. */
 export function HarvestGame({ onFinish }: HarvestGameProps) {
+  const { t } = useTranslation()
   // La simulación se crea una sola vez y se modifica solo dentro de callbacks.
   const [harvest] = useState(createHarvest)
   const [view, setView] = useState(() => snapshot(harvest))
-  const [note, setNote] = useState('Espera a que salgan los tomates rojos.')
+  const [note, setNote] = useState<TapResult | null>(null)
 
   useAnimationFrame((seconds) => {
     updateHarvest(harvest, seconds)
@@ -52,19 +48,19 @@ export function HarvestGame({ onFinish }: HarvestGameProps) {
 
   function tap(index: number) {
     if (harvestDone(harvest)) return
-    setNote(notes[tapPot(harvest, index)])
+    setNote(tapPot(harvest, index))
     setView(snapshot(harvest))
   }
 
   return (
     <div className="mj cosecha">
-      <Meter label="Tiempo" text={`${view.remaining} s`} value={view.remaining / duration * 100} color="var(--muted)" />
-      <Meter label="Cosecha" text={`${view.harvested} / ${goal}`} value={view.harvested / goal * 100} color="var(--crop)" />
-      <div className="invernadero" aria-label="Invernadero con cuatro macetas">
+      <Meter label={t('DUST.Time')} text={`${view.remaining} s`} value={view.remaining / duration * 100} color="var(--muted)" />
+      <Meter label={t('HARVEST.Meter')} text={`${view.harvested} / ${goal}`} value={view.harvested / goal * 100} color="var(--crop)" />
+      <div className="invernadero" aria-label={t('HARVEST.Greenhouse')}>
         {view.pots.map((pot, index) => (
           <button
             key={index} type="button" className={`maceta maceta-${pot.stage}`}
-            aria-label={`Maceta ${index + 1}: ${pot.stage === 'lista' ? 'lista para cosechar' : pot.stage === 'seca' ? 'planta seca' : 'creciendo'}`}
+            aria-label={t(`HARVEST.Pot.${pot.stage}`, { number: index + 1 })}
             onPointerDown={(event) => { event.preventDefault(); tap(index) }}
             onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); tap(index) } }}
           >
@@ -75,7 +71,7 @@ export function HarvestGame({ onFinish }: HarvestGameProps) {
           </button>
         ))}
       </div>
-      <p className="mj-nota" aria-live="polite">{note}</p>
+      <p className="mj-nota" aria-live="polite">{t(note ? `HARVEST.Note.${note}` : 'HARVEST.Note.Ready')}</p>
     </div>
   )
 }

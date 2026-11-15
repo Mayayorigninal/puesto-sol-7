@@ -1,3 +1,4 @@
+import { useTranslation } from '../../i18n/useTranslation'
 import { useEffect, useRef, useState } from 'react'
 import { Meter } from '../../components/Meter'
 import { useAnimationFrame } from '../useAnimationFrame'
@@ -8,6 +9,7 @@ type RunGameProps = { onFinish: (success: boolean, meters: number) => void }
 
 /** Minijuego de ejercicio: carrera lunar de un solo botón. */
 export function RunGame({ onFinish }: RunGameProps) {
+  const { t, rich } = useTranslation()
   const simulation = useRef<Run | null>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
@@ -57,19 +59,19 @@ export function RunGame({ onFinish }: RunGameProps) {
 
   return (
     <div className="mj run-game">
-      <Meter label="Rutina de ejercicio" text={`${display.remaining} s`} value={(duration - display.remaining) / duration * 100} color="var(--life)" />
+      <Meter label={t('RUN.Exercise')} text={`${display.remaining} s`} value={(duration - display.remaining) / duration * 100} color="var(--life)" />
       <div className="run-marcador">
-        <span className="run-tropiezos" role="img" aria-label={`Tropiezos: ${display.stumbles} de ${maxStumbles}`}>
-          Tropiezos
+        <span className="run-tropiezos" role="img" aria-label={t('RUN.Stumbles', { count: display.stumbles, max: maxStumbles })}>
+          {t('RUN.StumblesLabel')}
           {Array.from({ length: maxStumbles }, (_, index) => <i key={index} className={index < display.stumbles ? 'usado' : ''} />)}
         </span>
         <span>{display.meters} m</span>
       </div>
       <div className="lienzo-caja run-caja" onPointerDown={tap}>
-        <canvas ref={canvas} aria-label="El astronauta corre por la Luna. Hay cráteres en el suelo y meteoritos en el aire." />
+        <canvas ref={canvas} aria-label={t('RUN.Canvas')} />
       </div>
-      <button className="btn run-saltar" type="button" onPointerDown={tap}>¡Saltar!</button>
-      <p className="mj-nota">Salta los cráteres. Si viene un meteorito, <b>no saltes</b>: pasa por arriba.</p>
+      <button className="btn run-saltar" type="button" onPointerDown={tap}>{t('RUN.Jump')}</button>
+      <p className="mj-nota">{rich('RUN.Hint', { emphasis: <b>{t('RUN.HintEmphasis')}</b> })}</p>
     </div>
   )
 }

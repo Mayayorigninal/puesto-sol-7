@@ -1,5 +1,4 @@
 import { useTranslation } from '../i18n/useTranslation'
-
 import { forecastHidden, rules, type Resources, type RiskLevel } from '../game/rules.ts'
 
 export type StormView = 'no' | 'detenida' | 'golpe'

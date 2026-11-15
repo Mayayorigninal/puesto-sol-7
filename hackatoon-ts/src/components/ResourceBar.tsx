@@ -17,13 +17,11 @@ export function ResourceBar({ resources }: { resources: Resources }) {
           <img key={index} src={`${import.meta.env.BASE_URL}assets/corazon.png`} alt="" className={`corazon${index < crew ? '' : ' vacio'}`} />
         ))}
       </div>
-      // <div className="recurso rec-ciencia" role="img" aria-label={t('HUD.Science', { science, goal: rules.scienceGoal })}>
-      <div className={`recurso rec-comida${food <= 1 ? ' bajo' : ''}`} role="img" aria-label={`Comida: ${food} raciones`}>
+      <div className={`recurso rec-comida${food <= 1 ? ' bajo' : ''}`} role="img" aria-label={t(food === 1 ? 'HUD.FoodOne' : 'HUD.FoodMany', { count: food })}>
         <img src={`${import.meta.env.BASE_URL}assets/granja/planta-lista.png`} alt="" /><span className="n">{food}</span>
       </div>
-      <div className="recurso rec-ciencia" role="img" aria-label={`Ciencia: ${science} de ${rules.scienceGoal} experimentos`}>
+      <div className="recurso rec-ciencia" role="img" aria-label={t('HUD.Science', { science, goal: rules.scienceGoal })}>
         <Icon name="i-flask" /><span className="n">{science}<small>/{rules.scienceGoal}</small></span>
-      </div>
       </div>
     </div>
   )

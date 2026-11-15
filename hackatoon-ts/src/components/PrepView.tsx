@@ -60,7 +60,7 @@ export function PrepView({ sol, resources, onConfirm }: PrepViewProps) {
       <div className="prep-ops">
         <Choice
           icon="i-shield" className="prep-blindaje" title={t('PREP.Shield')} cost={rules.shieldCost}
-          detail={risk.chance > 0 ? t('PREP.ShieldAlert') : t('PREP.ShieldQuiet')}
+          detail={hidden ? t('PREP.ShieldUnknown') : risk.chance > 0 ? t('PREP.ShieldAlert') : t('PREP.ShieldQuiet')}
           active={plan.shield} disabled={blocked('shield')} onToggle={() => toggle('shield')}
         />
         <Choice
