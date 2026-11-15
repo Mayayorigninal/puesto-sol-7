@@ -15,10 +15,12 @@ export const taskKinds: Record<Mission, TaskKind> = {
   ejercicio: 'soporte',
   // Provisional: cuando exista la despensa, la cosecha llenará la comida.
   cosecha: 'soporte',
+  // Provisional: cuando exista el pronóstico oculto, la antena decidirá si mañana se ve el clima.
+  antena: 'soporte',
 }
 
 /** Tarea de soporte vital y salud que toca cada sol (la otra opción siempre son los paneles). */
-const supportRotation = ['filtro', 'ejercicio', 'cosecha', 'parches', 'fugas'] as const satisfies readonly Mission[]
+const supportRotation = ['filtro', 'ejercicio', 'cosecha', 'antena', 'parches', 'fugas'] as const satisfies readonly Mission[]
 
 export function routineOptions(sol: number): readonly [Mission, Mission] {
   return ['polvo', supportRotation[(sol - 1) % supportRotation.length]]

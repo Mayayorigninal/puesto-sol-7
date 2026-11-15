@@ -51,6 +51,19 @@ export const missions = {
     discovery: 'veggie',
     completion: 'tomates',
   },
+  antena: {
+    option: 'Reparar la antena',
+    detail: 'Un temblor lunar movió la antena. Sin señal, mañana no llegará el pronóstico del clima espacial desde la Tierra.',
+    title: '¡Apunta a la Tierra!',
+    instructions: 'Mantén presionado para que la antena gire y suelta cuando apunte a la Tierra. Cuando la señal esté verde, el mensaje sale. Envía 3 mensajes antes de que se acabe el tiempo.',
+    success: '¡Señal recuperada!',
+    failure: 'Nos quedamos sin señal.',
+    successText: 'La Tierra recibió los mensajes. Mañana llegará el pronóstico del clima espacial.',
+    failureText: (connections: number) => `Solo salieron ${Math.round(connections)} de 3 mensajes. La base está incomunicada por ahora.`,
+    fact: 'Desde la Luna, la Tierra casi no se mueve en el cielo, porque la Luna siempre le muestra la misma cara. Y sí hay temblores lunares: los sismómetros que dejaron las misiones Apolo registraron 28 temblores superficiales entre 1969 y 1977.',
+    discovery: 'tierra-fija',
+    completion: 'temblores',
+  },
   polvo: {
     option: 'Limpiar los paneles',
     detail: 'Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.',
@@ -80,4 +93,4 @@ export const missions = {
 } as const
 
 export type Mission = keyof typeof missions
-export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches', 'ejercicio', 'cosecha'] as const satisfies readonly Mission[]
+export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches', 'ejercicio', 'cosecha', 'antena'] as const satisfies readonly Mission[]
