@@ -551,3 +551,9 @@ p.clima-aviso { margin: 0; font-size: .84rem; line-height: 1.4; }
   .escala { max-width: 420px; }
   .clima-chips span { font-size: .7rem; }
 }
+
+/* corazones dibujados por Joseph */
+.rec-trip img.corazon { width: 16px; height: 16px; display: block; }
+.rec-trip img.corazon.vacio { filter: grayscale(1) brightness(1.6); opacity: .35; }
+.rec-trip { gap: 2px; }
+@media (min-width: 768px) { .rec-trip img.corazon { width: 22px; height: 22px; } }

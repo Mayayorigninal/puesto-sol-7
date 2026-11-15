@@ -11,7 +11,7 @@ export function ResourceBar({ resources }: { resources: Resources }) {
       </div>
       <div className={`recurso rec-trip${crew <= 2 ? ' bajo' : ''}`} role="img" aria-label={`Tripulación: ${crew} de ${rules.crewMax}`}>
         {Array.from({ length: rules.crewMax }, (_, index) => (
-          <Icon key={index} name="i-heart" className={index < crew ? '' : 'vacio'} />
+          <img key={index} src={`${import.meta.env.BASE_URL}assets/corazon.png`} alt="" className={`corazon${index < crew ? '' : ' vacio'}`} />
         ))}
       </div>
       <div className="recurso rec-ciencia" role="img" aria-label={`Ciencia: ${science} de ${rules.scienceGoal} experimentos`}>
