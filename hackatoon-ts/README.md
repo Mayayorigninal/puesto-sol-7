@@ -43,3 +43,8 @@ Ganas si completas **5 experimentos** en los 8 soles con la tripulación viva. P
 - `scripts/balance.ts` — simulador de balance.
 
 `npm run lint` revisa el código y `npm run build` compila la aplicación.
+
+## Créditos de arte
+
+- Corazón, astronauta, batería, tanque de O₂ y paneles solares: dibujos originales de Joseph Ruiz.
+- Plantas y macetas del invernadero: [FREE Pixel Art Flower Pack](https://karsiori.itch.io/free-pixel-art-flower-pack) de Karsiori, licencia CC0 (ver `public/assets/granja/LICENCIA.txt`).

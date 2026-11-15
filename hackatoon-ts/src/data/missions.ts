@@ -38,6 +38,19 @@ export const missions = {
     discovery: 'ejercicio',
     completion: 'huesos',
   },
+  cosecha: {
+    option: 'Cosechar el invernadero',
+    detail: 'Los tomates están madurando. Si nadie los cosecha a tiempo, se secan.',
+    title: '¡Cosecha a tiempo!',
+    instructions: 'Toca cada planta cuando tenga tomates rojos. Si la tocas antes, se arranca; si te tardas, se seca. Cosecha 8 antes de que se acabe el tiempo.',
+    success: '¡Buena cosecha!',
+    failure: 'La cosecha se quedó corta.',
+    successText: 'La tripulación tendrá tomates frescos además de la comida empacada.',
+    failureText: (harvested: number) => `Solo se cosecharon ${Math.round(harvested)} plantas. Habrá que comer comida empacada otra vez.`,
+    fact: 'Entre diciembre de 2022 y marzo de 2023, los astronautas de la Estación Espacial Internacional cultivaron tomates cherry enanos «Red Robin» en Veggie, un pequeño invernadero con luces LED. Antes ya habían cultivado lechuga y hasta flores.',
+    discovery: 'veggie',
+    completion: 'tomates',
+  },
   polvo: {
     option: 'Limpiar los paneles',
     detail: 'Están cubiertos de polvo y dan cada vez menos energía. El filtro de aire se queda sin revisar.',
@@ -67,4 +80,4 @@ export const missions = {
 } as const
 
 export type Mission = keyof typeof missions
-export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches', 'ejercicio'] as const satisfies readonly Mission[]
+export const missionOptions = ['polvo', 'filtro', 'fugas', 'parches', 'ejercicio', 'cosecha'] as const satisfies readonly Mission[]

@@ -28,7 +28,7 @@ export function RoutineView({ sol, resources, shield, onChoose }: RoutineViewPro
         warn: wearNext,
       }
     : {
-        gain: `${mission === 'ejercicio' ? 'Mantiene fuertes los huesos y músculos de la tripulación' : 'Cuida el aire de la tripulación'}. Si fallas, pierdes 1 corazón.`,
+        gain: `${{ ejercicio: 'Mantiene fuertes los huesos y músculos de la tripulación', cosecha: 'Da comida fresca a la tripulación' }[mission as 'ejercicio' | 'cosecha'] ?? 'Cuida el aire de la tripulación'}. Si fallas, pierdes 1 corazón.`,
         cost: dust > 0
           ? `Los paneles se quedan sin limpiar (ya llevan ${days(dust)} con polvo) y cargan cada vez menos energía.`
           : 'Los paneles se quedan sin limpiar y mañana cargan menos energía.',

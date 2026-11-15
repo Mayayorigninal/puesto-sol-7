@@ -6,6 +6,7 @@ import { LeakGame } from '../game/leaks/LeakGame'
 import type { GameAction, GameState } from '../game/missionState'
 import { PatchGame } from '../game/patches/PatchGame'
 import { RunGame } from '../game/run/RunGame'
+import { HarvestGame } from '../game/harvest/HarvestGame'
 import { ExperimentAnim } from './ExperimentAnim'
 import { Intro } from './Intro'
 import { MissionEnd } from './MissionEnd'
@@ -56,6 +57,7 @@ export function MissionView({ game, dispatch }: MissionViewProps) {
       if (phase.mission === 'fugas') return <LeakGame onFinish={onFinish} />
       if (phase.mission === 'parches') return <PatchGame onFinish={onFinish} />
       if (phase.mission === 'ejercicio') return <RunGame onFinish={onFinish} />
+      if (phase.mission === 'cosecha') return <HarvestGame onFinish={onFinish} />
       return phase.mission === 'polvo'
         ? <DustGame onFinish={onFinish} onSand={() => dispatch({ type: 'discover', milestone: 'arena' })} />
         : <FilterGame onFinish={onFinish} />
